@@ -1,29 +1,19 @@
-# modern-npm-package
+# js-iden3-core
 
-An npm package for demonstration purposes using TypeScript to build for both the ECMAScript Module format (i.e. ESM or ES Module) and CommonJS Module format (CJS). It can be used in Node.js and browser applications.
+[![Test](https://github.com/iden3/js-iden3-core/actions/workflows/test.yaml/badge.svg)](https://github.com/iden3/js-iden3-core/actions/workflows/test.yaml)
+[![Lint](https://github.com/iden3/js-iden3-core/actions/workflows/lint.yaml/badge.svg)](https://github.com/iden3/js-iden3-core/actions/workflows/lint.yaml)
 
-## Get Started
+TypeScript low-level API to create and manipulate iden3 Claims.
 
-1. Run `npm install` in your terminal
-1. Then run `npm run build`
-1. Update the `package.json` file "name" field with your own package name. Example `@username/package-name`
-1. Create an account with [npm](https://www.npmjs.com/signup) if you don't have one already. Also be sure to enable [two-factor authentication](https://docs.npmjs.com/configuring-two-factor-authentication)
-1. Sign in to your npm account in your terminal with `npm login`
-1. Run `npm publish --access=public` to publish your package
+## WARNING
 
-### Testing
+All code here is experimental and WIP
 
-1. Install developer dependencies using the following command in your terminal `npm i -D mocha @type/mocha chai @types/chai ts-node`
-1. Create a new file `.mocharc.json` in the root directory with the following contents:
-   ```json
-   {
-     "extension": ["ts"],
-     "spec": "./**/*.spec.ts",
-     "require": "ts-node/register"
-   }
-   ```
-1. Create a `tests` folder
-1. Create an `index.spec.ts` file in the `tests` folder
-1. Write unit tests in the `index.spec.ts` file to test the code in `index.ts`
-1. Add a `"test"` property in the `package.json` file and give it a value of `"mocha"`
-1. Run `npm test` in your terminal from the root folder of the project
+## Testing
+
+`npm run test`
+
+## License
+
+js-iden3-core is part of the iden3 project copyright 2018 0kims association
+and published with GPL-3 license, please check the LICENSE file for more details.
