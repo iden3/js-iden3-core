@@ -1,7 +1,6 @@
 # js-iden3-core
 
-[![Test](https://github.com/iden3/js-iden3-core/actions/workflows/test.yaml/badge.svg)](https://github.com/iden3/js-iden3-core/actions/workflows/test.yaml)
-[![Lint](https://github.com/iden3/js-iden3-core/actions/workflows/lint.yaml/badge.svg)](https://github.com/iden3/js-iden3-core/actions/workflows/lint.yaml)
+[![CI](https://github.com/iden3/js-iden3-core/actions/workflows/ci.yaml/badge.svg)](https://github.com/iden3/js-iden3-core/actions/workflows/ci.yaml)
 
 TypeScript low-level API to create and manipulate iden3 Claims.
 
