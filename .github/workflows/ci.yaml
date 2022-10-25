@@ -33,7 +33,12 @@ jobs:
         run: npm list
       - name: Install modules
         run: npm install
+
+      - name: Run Prettier
+        run: npm run format
+
       - name: Run ESLint
         run: npm run lint
+
       - name: Run Tests
         run: npm run test
