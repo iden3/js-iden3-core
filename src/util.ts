@@ -1,5 +1,5 @@
 import { Constants } from './constants';
-const buildPoseidon = require('circomlibjs');
+const poseidonLib = require('circomlibjs');
 
 export function fromLittleEndian(bytes: Uint8Array): bigint {
   const n256 = BigInt(256);
@@ -73,6 +73,6 @@ export function checkBigIntArrayInField(arr: bigint[]): boolean {
 }
 
 export async function poseidonHash(input: number[] | bigint[] | Uint8Array): Promise<bigint> {
-  const poseidon = await buildPoseidon();
+  const poseidon = await poseidonLib.buildPoseidon();
   return poseidon.F.toObject(poseidon(input));
 }
