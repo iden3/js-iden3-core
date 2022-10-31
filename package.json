@@ -1,6 +1,6 @@
 {
   "name": "@iden3/js-iden3-core",
-  "version": "0.0.0-development",
+  "version": "0.0.1",
   "description": "Low level API to create and manipulate iden3 Claims.",
   "exports": {
     ".": {
@@ -44,10 +44,9 @@
     "url": "https://github.com/iden3/js-iden3-core.git"
   },
   "keywords": [
-    "iden3",
-    "core"
+    "iden3"
   ],
-  "author": "D.Kolezhniuk",
+  "author": "Iden3 Core team",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/iden3/js-iden3-core/issues"

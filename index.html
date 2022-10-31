@@ -18,23 +18,24 @@
     const claim = Iden3Core.newClaim(new Iden3Core.SchemaHash(), Iden3Core.withFlagUpdatable(true));
     const { index, value } = claim.rawSlots();
     console.log(index, value, claim);
-    const indexHash = Iden3Core.poseidonHash([
-        index[0].toBigInt(),
-        index[1].toBigInt(),
-        index[2].toBigInt(),
-        index[3].toBigInt()
-    ]).then((hash) => {
-        console.log(hash);
-        console.assert('19905260441950906049955646784794273651462264973332746773406911374272567544299' == hash.toString());
-    });
-    const valueHash = Iden3Core.poseidonHash([
-        value[0].toBigInt(),
-        value[1].toBigInt(),
-        value[2].toBigInt(),
-        value[3].toBigInt()
-    ]).then((hash) => {
-        console.log(hash);
-        console.assert('2351654555892372227640888372176282444150254868378439619268573230312091195718' == hash.toString());
+    Iden3Core.Poseidon.init().then(() => {
+        console.log('Poseidon initialized');
+    }).then(() => {
+        console.assert(Iden3Core.Poseidon.hash([
+            index[0].toBigInt(),
+            index[1].toBigInt(),
+            index[2].toBigInt(),
+            index[3].toBigInt()
+        ]).toString() === '19905260441950906049955646784794273651462264973332746773406911374272567544299')
+        console.log('19905260441950906049955646784794273651462264973332746773406911374272567544299');
+    }).then(() => {
+        console.assert(Iden3Core.Poseidon.hash([
+            value[0].toBigInt(),
+            value[1].toBigInt(),
+            value[2].toBigInt(),
+            value[3].toBigInt()
+        ]).toString() === '2351654555892372227640888372176282444150254868378439619268573230312091195718')
+        console.log('2351654555892372227640888372176282444150254868378439619268573230312091195718');
     });
 </script>
 

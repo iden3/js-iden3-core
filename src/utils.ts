@@ -77,3 +77,15 @@ export async function poseidonHash(input: number[] | bigint[] | Uint8Array): Pro
   const poseidon = await poseidonLib.buildPoseidon();
   return poseidon.F.toObject(poseidon(input));
 }
+
+export class Poseidon {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private static _poseidon: any;
+  static async init(): Promise<void> {
+    Poseidon._poseidon = await poseidonLib.buildPoseidon();
+  }
+
+  static hash(input: number[] | bigint[] | Uint8Array): bigint {
+    return Poseidon._poseidon.F.toObject(Poseidon._poseidon(input));
+  }
+}

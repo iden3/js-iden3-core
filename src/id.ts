@@ -1,7 +1,7 @@
 import { Constants } from './constants';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const base58Js = require('base58-js');
-import { fromLittleEndian, poseidonHash } from './util';
+import { fromLittleEndian, poseidonHash } from './utils';
 import { BytesHelper } from './elemBytes';
 
 // ID is a byte array with

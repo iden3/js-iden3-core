@@ -14,7 +14,7 @@ import {
   withVersion
 } from '../src/claim';
 import { SchemaHash } from '../src/schemaHash';
-import { poseidonHash } from '../src/util';
+import { poseidonHash } from '../src/utils';
 import { Hex } from '../src/hex';
 import { Constants } from '../src/constants';
 import { Id } from '../src/id';

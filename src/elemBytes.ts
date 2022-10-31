@@ -1,6 +1,6 @@
 import { Constants } from './constants';
 import { sha256 } from 'cross-sha256';
-import { checkBigIntInField, fromLittleEndian, toLittleEndian } from './util';
+import { checkBigIntInField, fromLittleEndian, toLittleEndian } from './utils';
 import { Hex } from './hex';
 export class BytesHelper {
   static intToBytes(int: bigint): Uint8Array {
@@ -122,5 +122,13 @@ export class ElemBytes {
     }
 
     return result;
+  }
+
+  static fromInt(i: bigint): ElemBytes {
+    if (!checkBigIntInField(i)) {
+      throw new Error(Constants.ERRORS.DATA_OVERFLOW);
+    }
+    const bytes = BytesHelper.intToBytes(i);
+    return new ElemBytes(bytes);
   }
 }

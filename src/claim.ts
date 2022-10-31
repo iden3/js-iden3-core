@@ -12,7 +12,7 @@ import {
   poseidonHash,
   putUint32,
   putUint64 as getBytesFromUint64
-} from './util';
+} from './utils';
 
 /*
 Claim structure
