@@ -1,12 +1,19 @@
 import { DID, NetworkId, DIDMethodByte, DidMethod, withNetwork, Blockchain } from './../src/did';
 
 describe('DID tests', () => {
-  const tests = [
+  const tests: {
+    did: string;
+    description: string;
+    options: (did: DID) => void;
+    identifier: string;
+  }[] = [
     {
       description: 'Test readonly did',
       identifier: 'tN4jDinQUdMuJJo6GbVeKPNTPCJ7txyXTWU4T2tJa',
       did: 'did:iden3:tN4jDinQUdMuJJo6GbVeKPNTPCJ7txyXTWU4T2tJa',
-      options: () => null
+      options: () => {
+        return null;
+      }
     },
     {
       description: 'Test eth did',

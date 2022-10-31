@@ -129,8 +129,8 @@ export function withNetwork(blockchain: Blockchain, network: NetworkId): DIDOpti
 export class DID {
   public method: DidMethod = DidMethod.Iden3;
   public id: Id = new Id(new Uint8Array(2), new Uint8Array(27));
-  public blockchain: Blockchain = Blockchain.Unknown;
-  public networkId: NetworkId = NetworkId.Unknown;
+  public blockchain: Blockchain = Blockchain.NoChain;
+  public networkId: NetworkId = NetworkId.NoNetwork;
 
   // toString did as a string
   toString(): string {

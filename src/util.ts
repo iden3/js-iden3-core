@@ -1,4 +1,5 @@
 import { Constants } from './constants';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const poseidonLib = require('circomlibjs');
 
 export function fromLittleEndian(bytes: Uint8Array): bigint {

@@ -1,4 +1,5 @@
 import { Constants } from './constants';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const base58Js = require('base58-js');
 import { fromLittleEndian, poseidonHash } from './util';
 import { BytesHelper } from './elemBytes';
