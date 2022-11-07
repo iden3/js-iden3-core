@@ -10,7 +10,10 @@ export const Constants = Object.freeze({
     // throws when ID not found in the Claim.
     NO_ID: 'ID is not set',
     // throws when subject position flags sets in invalid value.
-    INVALID_SUBJECT_POSITION: 'invalid subject position'
+    INVALID_SUBJECT_POSITION: 'invalid subject position',
+    // ErrIncorrectMerklizePosition means that passed position is not one of predefined:
+    // MerklizePositionIndex or MerklizePositionValue
+    INCORRECT_MERKLIZE_POSITION: 'incorrect Merklize position'
   },
   SCHEMA: {
     HASH_LENGTH: 16

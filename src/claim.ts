@@ -29,7 +29,11 @@ Index:
             101: B.v Object Value
           [1] Expiration: bool
           [1] Updatable: bool
-          [27] 0
+          [3] Merklized:
+            000: none
+            001: C.i Root Index (root located in i_2)
+            010: C.v Root Value (root located in v_2)
+          [24] 0
       [ 32 bits ] version (optional?)
       [ 61 bits ] 0 - reserved for future use
  i_1: [ 248 bits] identity (case b) (optional)
@@ -67,6 +71,11 @@ export function withIndexId(id: Id): Option {
 // WithValueId sets Id to claim's value
 export function withValueId(id: Id): Option {
   return (c: Claim) => c.setValueId(id);
+}
+
+// WithFlagMerklize sets claim's flag `merklize`
+export function withFlagMerklize(p: MerklizePosition): Option {
+  return (c: Claim) => c.setFlagMerklize(p);
 }
 
 // WithId sets Id to claim's index or value depending on `pos`.
@@ -172,6 +181,24 @@ export enum SubjectFlag {
 }
 
 export enum IdPosition {
+  None = 0,
+  Index = 1,
+  Value = 2
+}
+
+// merklizeFlag for the time being describes the location of root (in index or value
+// slots or nowhere at all).
+//
+// Values merklizeFlagIndex indicates that root is located in index[2] slots.
+// Values merklizeFlagValue indicates that root is located in value[2] slots.
+export enum MerklizeFlag {
+  None = 0b00000000,
+  Index = 0b00100000,
+  Value = 0b01000000,
+  Invalid = 0b10000000
+}
+
+export enum MerklizePosition {
   None = 0,
   Index = 1,
   Value = 2
@@ -296,10 +323,49 @@ export class Claim {
     this.setSlotBytes(this._index[2], slotA, SlotName.IndexA);
     this.setSlotBytes(this._index[3], slotB, SlotName.IndexB);
   }
+
   private setSlotBytes(slot: ElemBytes, value: Uint8Array | null, slotName: SlotName) {
     slot = new ElemBytes(value);
     if (!checkBigIntInField(slot.toBigInt())) {
       throw new ErrSlotOverflow(slotName);
+    }
+  }
+
+  setFlagMerklize(s: MerklizePosition): void {
+    let f: number;
+    switch (s) {
+      case MerklizePosition.Index:
+        f = MerklizeFlag.Index;
+        break;
+      case MerklizePosition.Value:
+        f = MerklizeFlag.Value;
+        break;
+      default:
+        f = MerklizeFlag.None;
+    }
+    // clean last 3 bits
+    this.index[0].bytes[Flags.ByteIdx] &= 0b00011111;
+    this.index[0].bytes[Flags.ByteIdx] |= f;
+  }
+
+  private getMerklize(): MerklizeFlag {
+    let mt = this.index[0].bytes[Flags.ByteIdx];
+    // clean all except last 3 bits
+    mt &= 0b11100000;
+    return mt as MerklizeFlag;
+  }
+
+  // GetMerklizePosition returns the position at which the Merklize flag is stored.
+  getMerklizePosition(): MerklizePosition {
+    switch (this.getMerklize()) {
+      case MerklizeFlag.None:
+        return MerklizePosition.None;
+      case MerklizeFlag.Index:
+        return MerklizePosition.Index;
+      case MerklizeFlag.Value:
+        return MerklizePosition.Value;
+      default:
+        throw new Error(Constants.ERRORS.INCORRECT_MERKLIZE_POSITION);
     }
   }
 

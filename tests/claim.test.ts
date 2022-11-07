@@ -1,4 +1,11 @@
-import { IdPosition, SubjectFlag } from './../src/claim';
+import {
+  Flags,
+  IdPosition,
+  MerklizeFlag,
+  MerklizePosition,
+  SubjectFlag,
+  withFlagMerklize
+} from './../src/claim';
 import { BytesHelper, ElemBytes } from './../src/elemBytes';
 import {
   Claim,
@@ -370,6 +377,65 @@ describe('claim test', () => {
         const c = tt.claim();
         expect(() => c.getIdPosition()).toThrow(tt.expectedError);
       });
+    });
+  });
+
+  describe('merklization', () => {
+    const tests = [
+      {
+        name: 'not merklized',
+        claim: () => newClaim(new SchemaHash()),
+        expectedPosition: MerklizePosition.None
+      },
+      {
+        name: 'mt root stored in index',
+        claim: () => {
+          const claim = newClaim(new SchemaHash());
+          claim.setFlagMerklize(MerklizePosition.Index);
+          return claim;
+        },
+        expectedPosition: MerklizePosition.Index
+      },
+      {
+        name: 'mt root stored in value',
+        claim: () => {
+          const claim = newClaim(new SchemaHash());
+          claim.setFlagMerklize(MerklizePosition.Value);
+          return claim;
+        },
+        expectedPosition: MerklizePosition.Value
+      },
+      {
+        name: 'mt root random bits',
+        claim: () => {
+          const c = newClaim(new SchemaHash());
+          c.setFlagMerklize(MerklizePosition.Value);
+          return c;
+        },
+        expectedPosition: MerklizePosition.Value
+      }
+    ];
+
+    tests.forEach((test) => {
+      it(test.name, () => {
+        const c = test.claim();
+        const position = c.getMerklizePosition();
+        expect(position).toEqual(test.expectedPosition);
+      });
+    });
+
+    it('Error Case', () => {
+      const c = newClaim(new SchemaHash());
+      c.index[0].bytes[Flags.ByteIdx] &= 0b11111000;
+      c.index[0].bytes[Flags.ByteIdx] |= MerklizeFlag.Invalid;
+      expect(() => c.getMerklizePosition()).toThrow(
+        new Error(Constants.ERRORS.INCORRECT_MERKLIZE_POSITION)
+      );
+    });
+
+    it('WithFlagMerklized', () => {
+      const claim = newClaim(new SchemaHash(), withFlagMerklize(MerklizePosition.Index));
+      expect(MerklizeFlag.Index).toEqual(claim.index[0].bytes[Flags.ByteIdx] & 0b11100000);
     });
   });
 });
