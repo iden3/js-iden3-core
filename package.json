@@ -6,16 +6,18 @@
     ".": {
       "import": {
         "types": "./dist/esm/types/index.d.ts",
-        "default": "./dist/esm/index.mjs"
+        "module": "./dist/esm/index.js",
+        "default": "./dist/esm/index.js"
       },
       "require": {
         "types": "./dist/cjs/types/index.d.ts",
+        "module": "./dist/cjs/index.js",
         "default": "./dist/cjs/index.js"
       }
     }
   },
   "types": "./dist/cjs/types/index.d.ts",
-  "main": "./dist/cjs/index.js",
+  "main": "index.js",
   "module": "./dist/esm/index.mjs",
   "source": "./src/index.ts",
   "files": [
@@ -23,7 +25,7 @@
   ],
   "scripts": {
     "clean": "rimraf ./dist",
-    "build": "npm run clean && tsc -p configs/tsconfig.cjs.json && tsc -p configs/tsconfig.esm.json && webpack --mode production",
+    "build": "npm run clean && tsc -p configs/tsconfig.cjs.json && webpack --config webpack.esm.config.js --mode=production && webpack --mode production",
     "test:coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
