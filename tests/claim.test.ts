@@ -1,24 +1,12 @@
-import {
-  Flags,
-  IdPosition,
-  MerklizeFlag,
-  MerklizePosition,
-  SubjectFlag,
-  withFlagMerklize
-} from './../src/claim';
 import { BytesHelper, ElemBytes } from './../src/elemBytes';
 import {
   Claim,
-  newClaim,
-  withExpirationDate,
-  withFlagUpdatable,
-  withIndexData,
-  withIndexDataBytes,
-  withIndexDataInts,
-  withRevocationNonce,
-  withValueData,
-  withValueDataInts,
-  withVersion
+  ClaimOptions,
+  Flags,
+  IdPosition,
+  MerklizedFlag,
+  MerklizedPosition,
+  SubjectFlag
 } from '../src/claim';
 import { SchemaHash } from '../src/schemaHash';
 import { poseidonHash } from '../src/utils';
@@ -27,7 +15,7 @@ import { Constants } from '../src/constants';
 import { Id } from '../src/id';
 describe('claim test', () => {
   it('new claim', () => {
-    const claim = newClaim(new SchemaHash(), withFlagUpdatable(true));
+    const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withFlagUpdatable(true));
     expect(claim.value.length).toEqual(4);
     for (let i = 1; i < 4; i++) {
       expect(claim.index[i].bytes.every((b) => b === 0)).toBeTruthy();
@@ -45,7 +33,7 @@ describe('claim test', () => {
   });
 
   it('raw slots', async () => {
-    const claim = newClaim(new SchemaHash(), withFlagUpdatable(true));
+    const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withFlagUpdatable(true));
     const { index, value } = claim.rawSlots();
     const indexHash = await poseidonHash([
       index[0].toBigInt(),
@@ -74,7 +62,7 @@ describe('claim test', () => {
       Uint8Array.from(Array.from({ length: 16 }, () => Math.floor(Math.random() * 16)))
     );
     expect(sc.bytes.length).toEqual(16);
-    const claim = newClaim(sc);
+    const claim = Claim.newClaim(sc);
     expect(sc.bytes).toEqual(claim.index[0].bytes.slice(0, sc.bytes.length));
     const shFromClaim = claim.getSchemaHash();
     const shFromClaimHexBytes = shFromClaim.marshalText();
@@ -83,7 +71,7 @@ describe('claim test', () => {
 
   it('getFlagUpdatable', async () => {
     const sc = new SchemaHash();
-    let claim = newClaim(sc);
+    let claim = Claim.newClaim(sc);
     expect(claim.getFlagUpdatable()).toBeFalsy();
 
     claim.setFlagUpdatable(true);
@@ -92,17 +80,17 @@ describe('claim test', () => {
     claim.setFlagUpdatable(false);
     expect(claim.getFlagUpdatable()).toBeFalsy();
 
-    claim = newClaim(sc, withFlagUpdatable(true));
+    claim = Claim.newClaim(sc, ClaimOptions.withFlagUpdatable(true));
     expect(claim.getFlagUpdatable()).toBeTruthy();
 
-    claim = newClaim(sc, withFlagUpdatable(false));
+    claim = Claim.newClaim(sc, ClaimOptions.withFlagUpdatable(false));
     expect(claim.getFlagUpdatable()).toBeFalsy();
   });
 
   it('getVersion', async () => {
     const sc = new SchemaHash();
     const maxUint32 = Math.pow(2, 32) - 1;
-    const claim = newClaim(sc, withVersion(maxUint32));
+    const claim = Claim.newClaim(sc, ClaimOptions.withVersion(maxUint32));
     expect(maxUint32).toEqual(claim.getVersion());
     const randomInt = Math.floor(Math.random() * maxUint32);
     claim.setVersion(randomInt);
@@ -112,7 +100,7 @@ describe('claim test', () => {
   it('getRevocationNonce', () => {
     const sc = new SchemaHash();
     const nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    const claim = newClaim(sc, withRevocationNonce(nonce));
+    const claim = Claim.newClaim(sc, ClaimOptions.withRevocationNonce(nonce));
     expect(nonce).toEqual(claim.getRevocationNonce());
     const nonce2 = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
     claim.setRevocationNonce(nonce2);
@@ -123,7 +111,7 @@ describe('claim test', () => {
     const sh = new SchemaHash();
     const expDate = new Date();
     expDate.setSeconds(0, 0);
-    const c1 = newClaim(sh, withExpirationDate(expDate));
+    const c1 = Claim.newClaim(sh, ClaimOptions.withExpirationDate(expDate));
 
     let expDate2 = c1.getExpirationDate();
     expect(expDate2).not.toBeNull();
@@ -159,7 +147,11 @@ describe('claim test', () => {
     const iySlot = new ElemBytes().setBigInt(iY);
     const vxSlot = new ElemBytes().setBigInt(vX);
     const vySlot = new ElemBytes().setBigInt(vY);
-    newClaim(new SchemaHash(), withIndexData(ixSlot, iySlot), withValueData(vxSlot, vySlot));
+    Claim.newClaim(
+      new SchemaHash(),
+      ClaimOptions.withIndexData(ixSlot, iySlot),
+      ClaimOptions.withValueData(vxSlot, vySlot)
+    );
     expect(ixSlot.toBigInt().toString()).toEqual(iX.toString());
     expect(iySlot.toBigInt().toString()).toEqual(iY.toString());
     expect(vxSlot.toBigInt().toString()).toEqual(vX.toString());
@@ -190,10 +182,10 @@ describe('claim test', () => {
     expSlot.setBigInt(BigInt(0));
     const value = BigInt(64);
 
-    const claim = newClaim(new SchemaHash(), withIndexDataInts(value, null));
+    const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withIndexDataInts(value, null));
     expect(expSlot.bytes).toEqual(claim.index[3].bytes);
 
-    const claim2 = newClaim(new SchemaHash(), withIndexDataInts(null, value));
+    const claim2 = Claim.newClaim(new SchemaHash(), ClaimOptions.withIndexDataInts(null, value));
     expect(expSlot.bytes).toEqual(claim2.index[2].bytes);
   });
 
@@ -201,26 +193,29 @@ describe('claim test', () => {
     const expSlot = new ElemBytes();
     expSlot.setBigInt(BigInt(0));
     const value = BigInt(64);
-    const claim = newClaim(new SchemaHash(), withValueDataInts(value, null));
+    const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withValueDataInts(value, null));
     expect(expSlot.bytes).toEqual(claim.value[3].bytes);
 
-    const claim2 = newClaim(new SchemaHash(), withValueDataInts(null, value));
+    const claim2 = Claim.newClaim(new SchemaHash(), ClaimOptions.withValueDataInts(null, value));
     expect(expSlot.bytes).toEqual(claim2.value[2].bytes);
   });
 
-  it('with index data bytes', () => {
+  it('ClaimOptions.with index data bytes', () => {
     const iX = BigInt(
       '124482786795178117845085577341029868555797443843373384650556214865383112817'
     );
     const expSlot = new ElemBytes();
     expSlot.setBigInt(BigInt(0));
 
-    const claim = newClaim(new SchemaHash(), withIndexDataBytes(BytesHelper.intToBytes(iX), null));
+    const claim = Claim.newClaim(
+      new SchemaHash(),
+      ClaimOptions.withIndexDataBytes(BytesHelper.intToBytes(iX), null)
+    );
     expect(expSlot.bytes).toEqual(claim.index[3].bytes);
   });
 
   describe('serialization', () => {
-    it('with strings', () => {
+    it('ClaimOptions.with strings', () => {
       const input = `[
 		  "15163995036539824738096525342132337704181738148399168403057770094395141110111",
 		  "3206594817839378626027676511482956481343861686313501795018892230311002175077",
@@ -268,7 +263,7 @@ describe('claim test', () => {
       expect(JSON.parse(input)).toEqual(JSON.parse(result));
     });
 
-    it('with binary', () => {
+    it('ClaimOptions.with binary', () => {
       const binDataStr = [
         '5fb90badb37c5821b6d95526a41a9504680b4e7c8b763a1b1d49d4955c848621',
         '65f606f6a63b7f3dfd2567c18979e4d60f26686d9bf2fb26c901ff354cde1607',
@@ -320,18 +315,18 @@ describe('claim test', () => {
     });
   });
 
-  describe('work with id', () => {
+  describe('work ClaimOptions.with id', () => {
     it('id position', () => {
       const tests = [
         {
           name: 'self claim',
-          claim: () => newClaim(new SchemaHash()),
+          claim: () => Claim.newClaim(new SchemaHash()),
           expectedPosition: IdPosition.None
         },
         {
           name: 'subject stored in index',
           claim: () => {
-            const claim = newClaim(new SchemaHash());
+            const claim = Claim.newClaim(new SchemaHash());
             const genesis32bytes = BytesHelper.hashBytes('genesistest');
             const genesis = genesis32bytes.slice(0, 27);
             claim.setIndexId(new Id(Constants.ID.TYPE_DEFAULT, genesis));
@@ -342,7 +337,7 @@ describe('claim test', () => {
         {
           name: 'subject stored in value',
           claim: () => {
-            const claim = newClaim(new SchemaHash());
+            const claim = Claim.newClaim(new SchemaHash());
             const genesis32bytes = BytesHelper.hashBytes('genesistest');
             const genesis = genesis32bytes.slice(0, 27);
             claim.setValueId(new Id(Constants.ID.TYPE_DEFAULT, genesis));
@@ -364,7 +359,7 @@ describe('claim test', () => {
         {
           name: 'invalid position',
           claim: () => {
-            const c = newClaim(new SchemaHash());
+            const c = Claim.newClaim(new SchemaHash());
             c.setSubject(SubjectFlag.Invalid);
             return c;
           },
@@ -383,59 +378,110 @@ describe('claim test', () => {
   describe('merklization', () => {
     const tests = [
       {
-        name: 'not merklized',
-        claim: () => newClaim(new SchemaHash()),
-        expectedPosition: MerklizePosition.None
+        name: 'not merklizedd',
+        claim: () => Claim.newClaim(new SchemaHash()),
+        expectedPosition: MerklizedPosition.None
       },
       {
         name: 'mt root stored in index',
         claim: () => {
-          const claim = newClaim(new SchemaHash());
-          claim.setFlagMerklize(MerklizePosition.Index);
+          const claim = Claim.newClaim(new SchemaHash());
+          claim.setFlagMerklized(MerklizedPosition.Index);
           return claim;
         },
-        expectedPosition: MerklizePosition.Index
+        expectedPosition: MerklizedPosition.Index
       },
       {
         name: 'mt root stored in value',
         claim: () => {
-          const claim = newClaim(new SchemaHash());
-          claim.setFlagMerklize(MerklizePosition.Value);
+          const claim = Claim.newClaim(new SchemaHash());
+          claim.setFlagMerklized(MerklizedPosition.Value);
           return claim;
         },
-        expectedPosition: MerklizePosition.Value
+        expectedPosition: MerklizedPosition.Value
       },
       {
         name: 'mt root random bits',
         claim: () => {
-          const c = newClaim(new SchemaHash());
-          c.setFlagMerklize(MerklizePosition.Value);
+          const c = Claim.newClaim(new SchemaHash());
+          c.setFlagMerklized(MerklizedPosition.Value);
           return c;
         },
-        expectedPosition: MerklizePosition.Value
+        expectedPosition: MerklizedPosition.Value
       }
     ];
 
     tests.forEach((test) => {
       it(test.name, () => {
         const c = test.claim();
-        const position = c.getMerklizePosition();
+        const position = c.getMerklizedPosition();
         expect(position).toEqual(test.expectedPosition);
       });
     });
 
     it('Error Case', () => {
-      const c = newClaim(new SchemaHash());
+      const c = Claim.newClaim(new SchemaHash());
       c.index[0].bytes[Flags.ByteIdx] &= 0b11111000;
-      c.index[0].bytes[Flags.ByteIdx] |= MerklizeFlag.Invalid;
-      expect(() => c.getMerklizePosition()).toThrow(
-        new Error(Constants.ERRORS.INCORRECT_MERKLIZE_POSITION)
+      c.index[0].bytes[Flags.ByteIdx] |= MerklizedFlag.Invalid;
+      expect(() => c.getMerklizedPosition()).toThrow(
+        new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION)
       );
     });
 
-    it('WithFlagMerklized', () => {
-      const claim = newClaim(new SchemaHash(), withFlagMerklize(MerklizePosition.Index));
-      expect(MerklizeFlag.Index).toEqual(claim.index[0].bytes[Flags.ByteIdx] & 0b11100000);
+    it('ClaimOptions.WithFlagMerklized', () => {
+      const claim = Claim.newClaim(
+        new SchemaHash(),
+        ClaimOptions.withFlagMerklized(MerklizedPosition.Index)
+      );
+      expect(MerklizedFlag.Index).toEqual(claim.index[0].bytes[Flags.ByteIdx] & 0b11100000);
+    });
+
+    it('withIndexMerklizedRoot', () => {
+      const expVal = BigInt(9999);
+      const expSlot = new ElemBytes();
+      expSlot.setBigInt(expVal);
+
+      const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withIndexMerklizedRoot(expVal));
+      expect(expSlot).toEqual(claim.index[2]);
+
+      const position = claim.getMerklizedPosition();
+      expect(MerklizedPosition.Index).toEqual(position);
+    });
+
+    it('WithValueMerklizedRoot', () => {
+      const expVal = BigInt(9999);
+      const expSlot = new ElemBytes();
+      expSlot.setBigInt(expVal);
+
+      const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withValueMerklizedRoot(expVal));
+      expect(expSlot).toEqual(claim.value[2]);
+
+      const position = claim.getMerklizedPosition();
+      expect(MerklizedPosition.Value).toEqual(position);
+    });
+
+    it('ClaimOptions.withMerklizedRoot', () => {
+      const expVal = BigInt(9999);
+      const expSlot = new ElemBytes();
+      expSlot.setBigInt(expVal);
+
+      const claim = Claim.newClaim(
+        new SchemaHash(),
+        ClaimOptions.withMerklizedRoot(expVal, MerklizedPosition.Index)
+      );
+      expect(expSlot).toEqual(claim.index[2]);
+
+      const position = claim.getMerklizedPosition();
+      expect(MerklizedPosition.Index).toEqual(position);
+
+      const claim2 = Claim.newClaim(
+        new SchemaHash(),
+        ClaimOptions.withMerklizedRoot(expVal, MerklizedPosition.Value)
+      );
+      expect(expSlot).toEqual(claim2.value[2]);
+
+      const position2 = claim2.getMerklizedPosition();
+      expect(MerklizedPosition.Value).toEqual(position2);
     });
   });
 });

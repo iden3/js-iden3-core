@@ -1,4 +1,4 @@
-import { DID, NetworkId, DIDMethodByte, DidMethod, withNetwork, Blockchain } from './../src/did';
+import { DID, NetworkId, DIDMethodByte, DidMethod, DIDOptions, Blockchain } from './../src/did';
 
 describe('DID tests', () => {
   const tests: {
@@ -19,13 +19,13 @@ describe('DID tests', () => {
       description: 'Test eth did',
       identifier: 'zyaYCrj27j7gJfrBboMW49HFRSkQznyy12ABSVzTy',
       did: 'did:iden3:eth:main:zyaYCrj27j7gJfrBboMW49HFRSkQznyy12ABSVzTy',
-      options: withNetwork(Blockchain.Ethereum, NetworkId.Main)
+      options: DIDOptions.withNetwork(Blockchain.Ethereum, NetworkId.Main)
     },
     {
       description: 'Test polygon did',
       identifier: 'wyFiV4w71QgWPn6bYLsZoysFay66gKtVa9kfu6yMZ',
       did: 'did:iden3:polygon:mumbai:wyFiV4w71QgWPn6bYLsZoysFay66gKtVa9kfu6yMZ',
-      options: withNetwork(Blockchain.Polygon, NetworkId.Mumbai)
+      options: DIDOptions.withNetwork(Blockchain.Polygon, NetworkId.Mumbai)
     }
   ];
 

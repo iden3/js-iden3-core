@@ -29,7 +29,7 @@ Index:
             101: B.v Object Value
           [1] Expiration: bool
           [1] Updatable: bool
-          [3] Merklized:
+          [3] Merklized: data is merklized root is stored in the:
             000: none
             001: C.i Root Index (root located in i_2)
             010: C.v Root Value (root located in v_2)
@@ -49,108 +49,6 @@ Value:
  v_2: [ 253 bits] 0
  v_3: [ 253 bits] 0
 */
-
-// Option provides the ability to set different Claim's fields on construction
-export type Option = (c: Claim) => void;
-
-// WithFlagUpdatable sets claim's flag `updatable`
-export function withFlagUpdatable(val: boolean): Option {
-  return (c: Claim) => c.setFlagUpdatable(val);
-}
-
-// WithVersion sets claim's version
-export function withVersion(ver: number): Option {
-  return (c: Claim) => c.setVersion(ver);
-}
-
-// WithIndexId sets Id to claim's index
-export function withIndexId(id: Id): Option {
-  return (c: Claim) => c.setIndexId(id);
-}
-
-// WithValueId sets Id to claim's value
-export function withValueId(id: Id): Option {
-  return (c: Claim) => c.setValueId(id);
-}
-
-// WithFlagMerklize sets claim's flag `merklize`
-export function withFlagMerklize(p: MerklizePosition): Option {
-  return (c: Claim) => c.setFlagMerklize(p);
-}
-
-// WithId sets Id to claim's index or value depending on `pos`.
-export function withId(id: Id, pos: IdPosition): Option {
-  return (c: Claim) => {
-    switch (pos) {
-      case IdPosition.Index:
-        c.setIndexId(id);
-        break;
-      case IdPosition.Value:
-        c.setValueId(id);
-        break;
-      default:
-        throw new Error(Constants.ERRORS.INCORRECT_ID_POSITION);
-    }
-  };
-}
-
-// WithRevocationNonce sets claim's revocation nonce.
-export function withRevocationNonce(nonce: number): Option {
-  return (c: Claim) => c.setRevocationNonce(nonce);
-}
-
-// WithExpirationDate sets claim's expiration date to `dt`.
-export function withExpirationDate(dt: Date): Option {
-  return (c: Claim) => c.setExpirationDate(dt);
-}
-
-// WithIndexData sets data to index slots A & B.
-// Returns ErrSlotOverflow if slotA or slotB value are too big.
-export function withIndexData(slotA: ElemBytes, slotB: ElemBytes): Option {
-  return (c: Claim) => c.setIndexData(slotA, slotB);
-}
-
-// WithIndexDataBytes sets data to index slots A & B.
-// Returns ErrSlotOverflow if slotA or slotB value are too big.
-export function withIndexDataBytes(slotA: Uint8Array | null, slotB: Uint8Array | null): Option {
-  return (c: Claim) => c.setIndexDataBytes(slotA, slotB);
-}
-
-// WithIndexDataInts sets data to index slots A & B.
-// Returns ErrSlotOverflow if slotA or slotB value are too big.
-export function withIndexDataInts(slotA: bigint | null, slotB: bigint | null): Option {
-  return (c: Claim) => c.setIndexDataInts(slotA, slotB);
-}
-
-// WithValueData sets data to value slots A & B.
-// Returns ErrSlotOverflow if slotA or slotB value are too big.
-export function withValueData(slotA: ElemBytes, slotB: ElemBytes): Option {
-  return (c: Claim) => c.setValueData(slotA, slotB);
-}
-
-// WithValueDataBytes sets data to value slots A & B.
-// Returns ErrSlotOverflow if slotA or slotB value are too big.
-export function withValueDataBytes(slotA: Uint8Array, slotB: Uint8Array): Option {
-  return (c: Claim) => c.setValueDataBytes(slotA, slotB);
-}
-
-// WithValueDataInts sets data to value slots A & B.
-// Returns ErrSlotOverflow if slotA or slotB value are too big.
-export function withValueDataInts(slotA: bigint | null, slotB: bigint | null): Option {
-  return (c: Claim) => c.setValueDataInts(slotA, slotB);
-}
-
-// NewClaim creates new Claim with specified SchemaHash and any number of
-// options. Using options you can specify any field in claim.
-export function newClaim(sh: SchemaHash, ...args: Option[]): Claim {
-  const c = new Claim();
-  c.setSchemaHash(sh);
-  for (let i = 0; i < args.length; i++) {
-    const fn = args[i];
-    fn(c);
-  }
-  return c;
-}
 
 export enum SlotName {
   IndexA = 'IndexA',
@@ -186,19 +84,19 @@ export enum IdPosition {
   Value = 2
 }
 
-// merklizeFlag for the time being describes the location of root (in index or value
+// merklizedFlag for the time being describes the location of root (in index or value
 // slots or nowhere at all).
 //
-// Values merklizeFlagIndex indicates that root is located in index[2] slots.
-// Values merklizeFlagValue indicates that root is located in value[2] slots.
-export enum MerklizeFlag {
+// Values merklizedFlagIndex indicates that root is located in index[2] slots.
+// Values merklizedFlagValue indicates that root is located in value[2] slots.
+export enum MerklizedFlag {
   None = 0b00000000,
   Index = 0b00100000,
   Value = 0b01000000,
   Invalid = 0b10000000
 }
 
-export enum MerklizePosition {
+export enum MerklizedPosition {
   None = 0,
   Index = 1,
   Value = 2
@@ -219,6 +117,18 @@ export class Claim {
       this._index[i] = new ElemBytes();
       this._value[i] = new ElemBytes();
     }
+  }
+
+  // NewClaim creates new Claim with specified SchemaHash and any number of
+  // options. Using options you can specify any field in claim.
+  static newClaim(sh: SchemaHash, ...args: ClaimOption[]): Claim {
+    const c = new Claim();
+    c.setSchemaHash(sh);
+    for (let i = 0; i < args.length; i++) {
+      const fn = args[i];
+      fn(c);
+    }
+    return c;
   }
 
   // GetSchemaHash return copy of claim's schema hash.
@@ -331,45 +241,45 @@ export class Claim {
     }
   }
 
-  setFlagMerklize(s: MerklizePosition): void {
+  setFlagMerklized(s: MerklizedPosition): void {
     let f: number;
     switch (s) {
-      case MerklizePosition.Index:
-        f = MerklizeFlag.Index;
+      case MerklizedPosition.Index:
+        f = MerklizedFlag.Index;
         break;
-      case MerklizePosition.Value:
-        f = MerklizeFlag.Value;
+      case MerklizedPosition.Value:
+        f = MerklizedFlag.Value;
         break;
       default:
-        f = MerklizeFlag.None;
+        f = MerklizedFlag.None;
     }
     // clean last 3 bits
     this.index[0].bytes[Flags.ByteIdx] &= 0b00011111;
     this.index[0].bytes[Flags.ByteIdx] |= f;
   }
 
-  private getMerklize(): MerklizeFlag {
+  private getMerklized(): MerklizedFlag {
     let mt = this.index[0].bytes[Flags.ByteIdx];
     // clean all except last 3 bits
     mt &= 0b11100000;
-    return mt as MerklizeFlag;
+    return mt as MerklizedFlag;
   }
 
-  // GetMerklizePosition returns the position at which the Merklize flag is stored.
-  getMerklizePosition(): MerklizePosition {
-    switch (this.getMerklize()) {
-      case MerklizeFlag.None:
-        return MerklizePosition.None;
-      case MerklizeFlag.Index:
-        return MerklizePosition.Index;
-      case MerklizeFlag.Value:
-        return MerklizePosition.Value;
+  // GetMerklizedPosition returns the position at which the Merklized flag is stored.
+  getMerklizedPosition(): MerklizedPosition {
+    switch (this.getMerklized()) {
+      case MerklizedFlag.None:
+        return MerklizedPosition.None;
+      case MerklizedFlag.Index:
+        return MerklizedPosition.Index;
+      case MerklizedFlag.Value:
+        return MerklizedPosition.Value;
       default:
-        throw new Error(Constants.ERRORS.INCORRECT_MERKLIZE_POSITION);
+        throw new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION);
     }
   }
 
-  private setSlotInt(slot: ElemBytes, value: bigint | null, slotName: SlotName) {
+  public setSlotInt(slot: ElemBytes, value: bigint | null, slotName: SlotName) {
     if (!value) {
       value = BigInt(0);
     }
@@ -584,5 +494,133 @@ export class Claim {
         data.slice(j * Constants.BYTES_LENGTH, (j + 1) * Constants.BYTES_LENGTH)
       );
     }
+  }
+}
+
+// Option provides the ability to set different Claim's fields on construction
+export type ClaimOption = (c: Claim) => void;
+export class ClaimOptions {
+  // WithFlagUpdatable sets claim's flag `updatable`
+  static withFlagUpdatable(val: boolean): ClaimOption {
+    return (c: Claim) => c.setFlagUpdatable(val);
+  }
+
+  // WithVersion sets claim's version
+  static withVersion(ver: number): ClaimOption {
+    return (c: Claim) => c.setVersion(ver);
+  }
+
+  // WithIndexId sets Id to claim's index
+  static withIndexId(id: Id): ClaimOption {
+    return (c: Claim) => c.setIndexId(id);
+  }
+
+  // WithValueId sets Id to claim's value
+  static withValueId(id: Id): ClaimOption {
+    return (c: Claim) => c.setValueId(id);
+  }
+
+  // WithFlagMerklized sets claim's flag `merklized`
+  static withFlagMerklized(p: MerklizedPosition): ClaimOption {
+    return (c: Claim) => c.setFlagMerklized(p);
+  }
+
+  // WithId sets Id to claim's index or value depending on `pos`.
+  static withId(id: Id, pos: IdPosition): ClaimOption {
+    return (c: Claim) => {
+      switch (pos) {
+        case IdPosition.Index:
+          c.setIndexId(id);
+          break;
+        case IdPosition.Value:
+          c.setValueId(id);
+          break;
+        default:
+          throw new Error(Constants.ERRORS.INCORRECT_ID_POSITION);
+      }
+    };
+  }
+
+  // WithRevocationNonce sets claim's revocation nonce.
+  static withRevocationNonce(nonce: number): ClaimOption {
+    return (c: Claim) => c.setRevocationNonce(nonce);
+  }
+
+  // WithExpirationDate sets claim's expiration date to `dt`.
+  static withExpirationDate(dt: Date): ClaimOption {
+    return (c: Claim) => c.setExpirationDate(dt);
+  }
+
+  // WithIndexData sets data to index slots A & B.
+  // Returns ErrSlotOverflow if slotA or slotB value are too big.
+  static withIndexData(slotA: ElemBytes, slotB: ElemBytes): ClaimOption {
+    return (c: Claim) => c.setIndexData(slotA, slotB);
+  }
+
+  // WithIndexDataBytes sets data to index slots A & B.
+  // Returns ErrSlotOverflow if slotA or slotB value are too big.
+  static withIndexDataBytes(slotA: Uint8Array | null, slotB: Uint8Array | null): ClaimOption {
+    return (c: Claim) => c.setIndexDataBytes(slotA, slotB);
+  }
+
+  // WithIndexDataInts sets data to index slots A & B.
+  // Returns ErrSlotOverflow if slotA or slotB value are too big.
+  static withIndexDataInts(slotA: bigint | null, slotB: bigint | null): ClaimOption {
+    return (c: Claim) => c.setIndexDataInts(slotA, slotB);
+  }
+
+  // WithValueData sets data to value slots A & B.
+  // Returns ErrSlotOverflow if slotA or slotB value are too big.
+  static withValueData(slotA: ElemBytes, slotB: ElemBytes): ClaimOption {
+    return (c: Claim) => c.setValueData(slotA, slotB);
+  }
+
+  // WithValueDataBytes sets data to value slots A & B.
+  // Returns ErrSlotOverflow if slotA or slotB value are too big.
+  static withValueDataBytes(slotA: Uint8Array, slotB: Uint8Array): ClaimOption {
+    return (c: Claim) => c.setValueDataBytes(slotA, slotB);
+  }
+
+  // WithValueDataInts sets data to value slots A & B.
+  // Returns ErrSlotOverflow if slotA or slotB value are too big.
+  static withValueDataInts(slotA: bigint | null, slotB: bigint | null): ClaimOption {
+    return (c: Claim) => c.setValueDataInts(slotA, slotB);
+  }
+
+  // WithIndexMerklizedRoot sets root to index i_2
+  // Returns ErrSlotOverflow if root value are too big.
+  static withIndexMerklizedRoot(r: bigint): ClaimOption {
+    return (c: Claim) => {
+      c.setFlagMerklized(MerklizedPosition.Index);
+      c.setSlotInt(c.index[2], r, SlotName.IndexA);
+    };
+  }
+
+  // WithValueMerklizedRoot sets root to value v_2
+  // Returns ErrSlotOverflow if root value are too big.
+  static withValueMerklizedRoot(r: bigint): ClaimOption {
+    return (c: Claim) => {
+      c.setFlagMerklized(MerklizedPosition.Value);
+      c.setSlotInt(c.value[2], r, SlotName.ValueA);
+    };
+  }
+
+  // WithMerklizedRoot sets root to value v_2 or index i_2
+  // Returns ErrSlotOverflow if root value are too big.
+  static withMerklizedRoot(r: bigint, pos: MerklizedPosition): ClaimOption {
+    return (c: Claim) => {
+      switch (pos) {
+        case MerklizedPosition.Index:
+          c.setFlagMerklized(MerklizedPosition.Index);
+          c.setSlotInt(c.index[2], r, SlotName.IndexA);
+          break;
+        case MerklizedPosition.Value:
+          c.setFlagMerklized(MerklizedPosition.Value);
+          c.setSlotInt(c.value[2], r, SlotName.ValueA);
+          break;
+        default:
+          throw new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION);
+      }
+    };
   }
 }

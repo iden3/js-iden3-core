@@ -1,13 +1,17 @@
 import { Hex } from './../src/hex';
 import { ElemBytes } from './../src/elemBytes';
-import { newClaim, withExpirationDate, withVersion } from '../src/claim';
+import { ClaimOptions, Claim } from '../src/claim';
 import { SchemaHash } from '../src/schemaHash';
 import { poseidonHash } from '../src/utils';
 describe('example new claim', () => {
   it('new claim', async () => {
     const schemaHash = new SchemaHash();
     const expDate = new Date(Date.UTC(2021, 0, 10, 20, 30, 0, 0));
-    const claim = newClaim(schemaHash, withExpirationDate(expDate), withVersion(42));
+    const claim = Claim.newClaim(
+      schemaHash,
+      ClaimOptions.withExpirationDate(expDate),
+      ClaimOptions.withVersion(42)
+    );
     const expDateRes = claim.getExpirationDate();
     expect(expDateRes).toEqual(expDate);
     expect(claim.getVersion()).toEqual(42);

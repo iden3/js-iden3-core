@@ -13,7 +13,7 @@ export const Constants = Object.freeze({
     INVALID_SUBJECT_POSITION: 'invalid subject position',
     // ErrIncorrectMerklizePosition means that passed position is not one of predefined:
     // MerklizePositionIndex or MerklizePositionValue
-    INCORRECT_MERKLIZE_POSITION: 'incorrect Merklize position'
+    INCORRECT_MERKLIZED_POSITION: 'incorrect Merklize position'
   },
   SCHEMA: {
     HASH_LENGTH: 16

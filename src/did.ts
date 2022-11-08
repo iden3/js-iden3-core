@@ -115,13 +115,16 @@ export function findDIDMethodByValue(byteNumber: number): DidMethod {
   throw new Error(`bytes ${byteNumber} are not defined in core lib as valid did method`);
 }
 
-export type DIDOptions = (did: DID) => void;
-// WithNetwork sets Blockchain and NetworkID (eth:main)
-export function withNetwork(blockchain: Blockchain, network: NetworkId): DIDOptions {
-  return (did: DID) => {
-    did.networkId = network;
-    did.blockchain = blockchain;
-  };
+export type DIDOption = (did: DID) => void;
+
+export class DIDOptions {
+  // WithNetwork sets Blockchain and NetworkID (eth:main)
+  static withNetwork(blockchain: Blockchain, network: NetworkId): DIDOption {
+    return (did: DID) => {
+      did.networkId = network;
+      did.blockchain = blockchain;
+    };
+  }
 }
 
 // DID Decentralized Identifiers (DIDs)
@@ -221,7 +224,7 @@ export class DID {
     return did;
   }
 
-  static newDID(didStr: string, ...args: DIDOptions[]): DID {
+  static newDID(didStr: string, ...args: DIDOption[]): DID {
     const did = new DID();
     did.id = Id.fromString(didStr);
     args.filter((opt) => !!opt).forEach((arg) => arg(did));
