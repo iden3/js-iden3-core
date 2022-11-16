@@ -35,6 +35,16 @@ describe('id tests', () => {
     expect(id0.bytes).toEqual(id0FromString.bytes);
     expect(id0.string()).toEqual(id0FromString.string());
     expect('114vgnnCupQMX4wqUBjg5kUya3zMXfPmKc9HNH4m2E').toEqual(id0FromString.string());
+
+    const id0FromBigInt = Id.idFromInt(id0.bigInt());
+    expect(id1.bytes).toEqual(id1FromBytes.bytes);
+    expect(id1.string()).toEqual(id1FromBytes.string());
+    expect('1GYjyJKqdDyzo927FqJkAdLWB64kV2NVAjaQFHtq4').toEqual(id1FromBytes.string());
+
+    const id1FromBigInt = Id.idFromInt(id1.bigInt());
+    expect(id1.bytes).toEqual(id1FromBytes.bytes);
+    expect(id1.string()).toEqual(id1FromBytes.string());
+    expect('1GYjyJKqdDyzo927FqJkAdLWB64kV2NVAjaQFHtq4').toEqual(id1FromBytes.string());
   });
 
   it('marshal/unmarshal', () => {

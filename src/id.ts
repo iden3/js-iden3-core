@@ -85,7 +85,7 @@ export class Id {
   }
 
   static idFromInt(bigInt: bigint): Id {
-    const b = BytesHelper.intToBytes(bigInt);
+    const b = BytesHelper.intToNBytes(bigInt, Constants.ID.ID_LENGTH);
     return Id.fromBytes(b);
   }
 
