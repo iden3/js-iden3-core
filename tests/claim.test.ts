@@ -5,7 +5,7 @@ import {
   Flags,
   IdPosition,
   MerklizedFlag,
-  MerklizedPosition,
+  MerklizedRootPosition,
   SubjectFlag
 } from '../src/claim';
 import { SchemaHash } from '../src/schemaHash';
@@ -380,34 +380,34 @@ describe('claim test', () => {
       {
         name: 'not merklizedd',
         claim: () => Claim.newClaim(new SchemaHash()),
-        expectedPosition: MerklizedPosition.None
+        expectedPosition: MerklizedRootPosition.None
       },
       {
         name: 'mt root stored in index',
         claim: () => {
           const claim = Claim.newClaim(new SchemaHash());
-          claim.setFlagMerklized(MerklizedPosition.Index);
+          claim.setFlagMerklized(MerklizedRootPosition.Index);
           return claim;
         },
-        expectedPosition: MerklizedPosition.Index
+        expectedPosition: MerklizedRootPosition.Index
       },
       {
         name: 'mt root stored in value',
         claim: () => {
           const claim = Claim.newClaim(new SchemaHash());
-          claim.setFlagMerklized(MerklizedPosition.Value);
+          claim.setFlagMerklized(MerklizedRootPosition.Value);
           return claim;
         },
-        expectedPosition: MerklizedPosition.Value
+        expectedPosition: MerklizedRootPosition.Value
       },
       {
         name: 'mt root random bits',
         claim: () => {
           const c = Claim.newClaim(new SchemaHash());
-          c.setFlagMerklized(MerklizedPosition.Value);
+          c.setFlagMerklized(MerklizedRootPosition.Value);
           return c;
         },
-        expectedPosition: MerklizedPosition.Value
+        expectedPosition: MerklizedRootPosition.Value
       }
     ];
 
@@ -431,7 +431,7 @@ describe('claim test', () => {
     it('ClaimOptions.WithFlagMerklized', () => {
       const claim = Claim.newClaim(
         new SchemaHash(),
-        ClaimOptions.withFlagMerklized(MerklizedPosition.Index)
+        ClaimOptions.withFlagMerklized(MerklizedRootPosition.Index)
       );
       expect(MerklizedFlag.Index).toEqual(claim.index[0].bytes[Flags.ByteIdx] & 0b11100000);
     });
@@ -445,7 +445,7 @@ describe('claim test', () => {
       expect(expSlot).toEqual(claim.index[2]);
 
       const position = claim.getMerklizedPosition();
-      expect(MerklizedPosition.Index).toEqual(position);
+      expect(MerklizedRootPosition.Index).toEqual(position);
     });
 
     it('WithValueMerklizedRoot', () => {
@@ -457,7 +457,7 @@ describe('claim test', () => {
       expect(expSlot).toEqual(claim.value[2]);
 
       const position = claim.getMerklizedPosition();
-      expect(MerklizedPosition.Value).toEqual(position);
+      expect(MerklizedRootPosition.Value).toEqual(position);
     });
 
     it('ClaimOptions.withMerklizedRoot', () => {
@@ -467,21 +467,57 @@ describe('claim test', () => {
 
       const claim = Claim.newClaim(
         new SchemaHash(),
-        ClaimOptions.withMerklizedRoot(expVal, MerklizedPosition.Index)
+        ClaimOptions.withMerklizedRoot(expVal, MerklizedRootPosition.Index)
       );
       expect(expSlot).toEqual(claim.index[2]);
 
       const position = claim.getMerklizedPosition();
-      expect(MerklizedPosition.Index).toEqual(position);
+      expect(MerklizedRootPosition.Index).toEqual(position);
 
       const claim2 = Claim.newClaim(
         new SchemaHash(),
-        ClaimOptions.withMerklizedRoot(expVal, MerklizedPosition.Value)
+        ClaimOptions.withMerklizedRoot(expVal, MerklizedRootPosition.Value)
       );
       expect(expSlot).toEqual(claim2.value[2]);
 
       const position2 = claim2.getMerklizedPosition();
-      expect(MerklizedPosition.Value).toEqual(position2);
+      expect(MerklizedRootPosition.Value).toEqual(position2);
+    });
+
+    it('setMerklizedRoot', () => {
+      const expVal = BigInt(9999);
+      const expSlot = new ElemBytes();
+      expSlot.setBigInt(expVal);
+
+      const claim = Claim.newClaim(new SchemaHash());
+
+      claim.setIndexMerklizedRoot(expVal);
+      expect(expSlot).toEqual(claim.index[2]);
+
+      const position = claim.getMerklizedPosition();
+      expect(MerklizedRootPosition.Index).toEqual(position);
+
+      const r = claim.getMerklizedRoot();
+      expect(expVal).toEqual(r);
+
+      const claim2 = Claim.newClaim(new SchemaHash());
+
+      claim2.setValueMerklizedRoot(expVal);
+      expect(expSlot).toEqual(claim2.value[2]);
+
+      const position2 = claim2.getMerklizedPosition();
+      expect(MerklizedRootPosition.Value).toEqual(position2);
+
+      const r2 = claim2.getMerklizedRoot();
+      expect(r2).toEqual(expVal);
+
+      const claim3 = Claim.newClaim(new SchemaHash());
+
+      const position3 = claim3.getMerklizedPosition();
+      expect(MerklizedRootPosition.None).toEqual(position3);
+      expect(() => claim3.getMerklizedRoot()).toThrow(
+        new Error(Constants.ERRORS.NO_MERKLIZED_ROOT)
+      );
     });
   });
 });

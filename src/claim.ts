@@ -96,7 +96,7 @@ export enum MerklizedFlag {
   Invalid = 0b10000000
 }
 
-export enum MerklizedPosition {
+export enum MerklizedRootPosition {
   None = 0,
   Index = 1,
   Value = 2
@@ -241,13 +241,13 @@ export class Claim {
     }
   }
 
-  setFlagMerklized(s: MerklizedPosition): void {
+  setFlagMerklized(s: MerklizedRootPosition): void {
     let f: number;
     switch (s) {
-      case MerklizedPosition.Index:
+      case MerklizedRootPosition.Index:
         f = MerklizedFlag.Index;
         break;
-      case MerklizedPosition.Value:
+      case MerklizedRootPosition.Value:
         f = MerklizedFlag.Value;
         break;
       default:
@@ -266,20 +266,20 @@ export class Claim {
   }
 
   // GetMerklizedPosition returns the position at which the Merklized flag is stored.
-  getMerklizedPosition(): MerklizedPosition {
+  getMerklizedPosition(): MerklizedRootPosition {
     switch (this.getMerklized()) {
       case MerklizedFlag.None:
-        return MerklizedPosition.None;
+        return MerklizedRootPosition.None;
       case MerklizedFlag.Index:
-        return MerklizedPosition.Index;
+        return MerklizedRootPosition.Index;
       case MerklizedFlag.Value:
-        return MerklizedPosition.Value;
+        return MerklizedRootPosition.Value;
       default:
         throw new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION);
     }
   }
 
-  public setSlotInt(slot: ElemBytes, value: bigint | null, slotName: SlotName) {
+  public setSlotInt(slot: ElemBytes, value: bigint | null, slotName: SlotName): void {
     if (!value) {
       value = BigInt(0);
     }
@@ -416,6 +416,40 @@ export class Claim {
     return { hi: await this.hIndex(), hv: await this.hValue() };
   }
 
+  // SetIndexMerklizedRoot sets merklized root to index. Removes root from value[2] if any.
+  setIndexMerklizedRoot(r: bigint): void {
+    this.resetValueMerklizedRoot();
+    this.setFlagMerklized(MerklizedRootPosition.Index);
+    this.setSlotInt(this.index[2], r, SlotName.IndexA);
+  }
+
+  resetIndexMerklizedRoot() {
+    this._index[2] = new ElemBytes(new Uint8Array(Constants.BYTES_LENGTH).fill(0));
+  }
+
+  // SetValueMerklizedRoot sets merklized root to value. Removes root from index[2] if any.
+  setValueMerklizedRoot(r: bigint): void {
+    this.resetIndexMerklizedRoot();
+    this.setFlagMerklized(MerklizedRootPosition.Value);
+    this.setSlotInt(this.value[2], r, SlotName.ValueA);
+  }
+  resetValueMerklizedRoot() {
+    this._value[2] = new ElemBytes(new Uint8Array(Constants.BYTES_LENGTH).fill(0));
+  }
+
+  // GetMerklizedRoot returns merklized root from claim's index of value.
+  // Returns error ErrNoMerklizedRoot if MerklizedRoot is not set.
+  getMerklizedRoot(): bigint {
+    switch (this.getMerklized()) {
+      case MerklizedFlag.Index:
+        return this.index[2].toBigInt();
+      case MerklizedFlag.Value:
+        return this.value[2].toBigInt();
+      default:
+        throw new Error(Constants.ERRORS.NO_MERKLIZED_ROOT);
+    }
+  }
+
   // resetId deletes Id from index and from value.
   resetId(): void {
     this.resetIndexId();
@@ -521,7 +555,7 @@ export class ClaimOptions {
   }
 
   // WithFlagMerklized sets claim's flag `merklized`
-  static withFlagMerklized(p: MerklizedPosition): ClaimOption {
+  static withFlagMerklized(p: MerklizedRootPosition): ClaimOption {
     return (c: Claim) => c.setFlagMerklized(p);
   }
 
@@ -591,7 +625,7 @@ export class ClaimOptions {
   // Returns ErrSlotOverflow if root value are too big.
   static withIndexMerklizedRoot(r: bigint): ClaimOption {
     return (c: Claim) => {
-      c.setFlagMerklized(MerklizedPosition.Index);
+      c.setFlagMerklized(MerklizedRootPosition.Index);
       c.setSlotInt(c.index[2], r, SlotName.IndexA);
     };
   }
@@ -600,22 +634,22 @@ export class ClaimOptions {
   // Returns ErrSlotOverflow if root value are too big.
   static withValueMerklizedRoot(r: bigint): ClaimOption {
     return (c: Claim) => {
-      c.setFlagMerklized(MerklizedPosition.Value);
+      c.setFlagMerklized(MerklizedRootPosition.Value);
       c.setSlotInt(c.value[2], r, SlotName.ValueA);
     };
   }
 
   // WithMerklizedRoot sets root to value v_2 or index i_2
   // Returns ErrSlotOverflow if root value are too big.
-  static withMerklizedRoot(r: bigint, pos: MerklizedPosition): ClaimOption {
+  static withMerklizedRoot(r: bigint, pos: MerklizedRootPosition): ClaimOption {
     return (c: Claim) => {
       switch (pos) {
-        case MerklizedPosition.Index:
-          c.setFlagMerklized(MerklizedPosition.Index);
+        case MerklizedRootPosition.Index:
+          c.setFlagMerklized(MerklizedRootPosition.Index);
           c.setSlotInt(c.index[2], r, SlotName.IndexA);
           break;
-        case MerklizedPosition.Value:
-          c.setFlagMerklized(MerklizedPosition.Value);
+        case MerklizedRootPosition.Value:
+          c.setFlagMerklized(MerklizedRootPosition.Value);
           c.setSlotInt(c.value[2], r, SlotName.ValueA);
           break;
         default:

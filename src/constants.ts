@@ -13,7 +13,9 @@ export const Constants = Object.freeze({
     INVALID_SUBJECT_POSITION: 'invalid subject position',
     // ErrIncorrectMerklizePosition means that passed position is not one of predefined:
     // MerklizePositionIndex or MerklizePositionValue
-    INCORRECT_MERKLIZED_POSITION: 'incorrect Merklize position'
+    INCORRECT_MERKLIZED_POSITION: 'incorrect Merklize position',
+    // ErrNoMerklizedRoot returns when Merklized Root is not found in the Claim.
+    NO_MERKLIZED_ROOT: 'Merklized root is not set'
   },
   SCHEMA: {
     HASH_LENGTH: 16
