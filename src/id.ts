@@ -2,7 +2,7 @@ import { Constants } from './constants';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const base58Js = require('base58-js');
 import { fromLittleEndian, poseidonHash } from './utils';
-import { BytesHelper } from './elemBytes';
+import { BytesHelper, ElemBytes } from './elemBytes';
 
 // ID is a byte array with
 // [  type  | root_genesis | checksum ]
@@ -94,5 +94,17 @@ export class Id {
     const { typ } = BytesHelper.decomposeBytes(id.bytes);
     const genesis = BytesHelper.intToNBytes(bigIntHash, 27);
     return new Id(typ, genesis);
+  }
+
+  // IdGenesisFromIdenState calculates the genesis ID from an Identity State.
+  static idGenesisFromIdenState(
+    typ: Uint8Array, //nolint:revive
+    state: bigint
+  ): Id {
+    const idenStateData = ElemBytes.fromInt(state);
+
+    // we take last 27 bytes, because of swapped endianness
+    const idGenesisBytes = idenStateData.bytes.slice(idenStateData.bytes.length - 27);
+    return new Id(typ, idGenesisBytes);
   }
 }
