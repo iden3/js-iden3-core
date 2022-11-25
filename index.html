@@ -7,36 +7,18 @@
         content="IE=edge">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
-    <script src="./dist/umd/iden3core.js"></script>
+    <script src="./dist/umd/index.js"></script>
     <title>Test</title>
 </head>
 
 <body>
-    Test poseidon (open console)
+    Test UMD script work
 </body>
 <script>
-    const claim = Iden3Core.newClaim(new Iden3Core.SchemaHash(), Iden3Core.withFlagUpdatable(true));
+    const claim = Iden3Core.Claim.newClaim(new Iden3Core.SchemaHash(), Iden3Core.ClaimOptions.withFlagUpdatable(true));
     const { index, value } = claim.rawSlots();
     console.log(index, value, claim);
-    Iden3Core.Poseidon.init().then(() => {
-        console.log('Poseidon initialized');
-    }).then(() => {
-        console.assert(Iden3Core.Poseidon.hash([
-            index[0].toBigInt(),
-            index[1].toBigInt(),
-            index[2].toBigInt(),
-            index[3].toBigInt()
-        ]).toString() === '19905260441950906049955646784794273651462264973332746773406911374272567544299')
-        console.log('19905260441950906049955646784794273651462264973332746773406911374272567544299');
-    }).then(() => {
-        console.assert(Iden3Core.Poseidon.hash([
-            value[0].toBigInt(),
-            value[1].toBigInt(),
-            value[2].toBigInt(),
-            value[3].toBigInt()
-        ]).toString() === '2351654555892372227640888372176282444150254868378439619268573230312091195718')
-        console.log('2351654555892372227640888372176282444150254868378439619268573230312091195718');
-    });
+    console.assert(claim.value.length === 4);
 </script>
 
 </html>

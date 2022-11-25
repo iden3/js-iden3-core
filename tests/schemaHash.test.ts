@@ -1,5 +1,5 @@
+import { Hex } from '@iden3/js-crypto';
 import { SchemaHash } from '../src/schemaHash';
-import { Hex } from '../src/hex';
 describe('schema hash', () => {
   it('should return the hex value', () => {
     const source = Uint8Array.from([

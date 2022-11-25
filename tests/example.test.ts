@@ -1,10 +1,9 @@
-import { Hex } from './../src/hex';
 import { ElemBytes } from './../src/elemBytes';
 import { ClaimOptions, Claim } from '../src/claim';
 import { SchemaHash } from '../src/schemaHash';
-import { poseidonHash } from '../src/utils';
+import { Hex, poseidon } from '@iden3/js-crypto';
 describe('example new claim', () => {
-  it('new claim', async () => {
+  it('new claim', () => {
     const schemaHash = new SchemaHash();
     const expDate = new Date(Date.UTC(2021, 0, 10, 20, 30, 0, 0));
     const claim = Claim.newClaim(
@@ -17,9 +16,9 @@ describe('example new claim', () => {
     expect(claim.getVersion()).toEqual(42);
     const { index, value } = claim.rawSlots();
 
-    const indexHash = await poseidonHash(ElemBytes.elemBytesToInts(index));
+    const indexHash = poseidon.hash(ElemBytes.elemBytesToInts(index));
 
-    const valueHash = await poseidonHash(ElemBytes.elemBytesToInts(value));
+    const valueHash = poseidon.hash(ElemBytes.elemBytesToInts(value));
 
     const indexSlot = ElemBytes.fromInt(indexHash);
 

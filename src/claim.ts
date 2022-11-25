@@ -9,10 +9,10 @@ import {
   getUint32,
   getUint64,
   getUnixTimestamp,
-  poseidonHash,
   putUint32,
   putUint64 as getBytesFromUint64
 } from './utils';
+import { poseidon } from '@iden3/js-crypto';
 
 /*
 Claim structure
@@ -396,8 +396,8 @@ export class Claim {
   }
 
   // HIndex calculates the hash of the Index of the Claim
-  async hIndex(): Promise<bigint> {
-    return await poseidonHash(ElemBytes.elemBytesToInts(this._index));
+  hIndex(): bigint {
+    return poseidon.hash(ElemBytes.elemBytesToInts(this._index));
   }
 
   // GetFlagUpdatable returns claim's flag `updatable`
@@ -407,13 +407,13 @@ export class Claim {
   }
 
   // HValue calculates the hash of the Value of the Claim
-  async hValue(): Promise<bigint> {
-    return await poseidonHash(ElemBytes.elemBytesToInts(this._value));
+  hValue(): bigint {
+    return poseidon.hash(ElemBytes.elemBytesToInts(this._value));
   }
 
   // HiHv returns the HIndex and HValue of the Claim
-  async hiHv(): Promise<{ hi: bigint; hv: bigint }> {
-    return { hi: await this.hIndex(), hv: await this.hValue() };
+  hiHv(): { hi: bigint; hv: bigint } {
+    return { hi: this.hIndex(), hv: this.hValue() };
   }
 
   // SetIndexMerklizedRoot sets merklized root to index. Removes root from value[2] if any.
