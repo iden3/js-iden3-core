@@ -62,8 +62,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@iden3/js-crypto": "file:../js-crypto",
-    "@iden3/js-iden3-core": "file:../js-iden3-core",
+    "@iden3/js-crypto": "file:./iden3-js-crypto-0.0.1.tgz",
     "base58-js": "^1.0.4",
     "cross-sha256": "^1.2.0"
   }
