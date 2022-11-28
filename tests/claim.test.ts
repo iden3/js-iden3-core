@@ -9,10 +9,9 @@ import {
   SubjectFlag
 } from '../src/claim';
 import { SchemaHash } from '../src/schemaHash';
-import { poseidonHash } from '../src/utils';
-import { Hex } from '../src/hex';
 import { Constants } from '../src/constants';
 import { Id } from '../src/id';
+import { Hex, poseidon } from '@iden3/js-crypto';
 describe('claim test', () => {
   it('new claim', () => {
     const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withFlagUpdatable(true));
@@ -32,16 +31,16 @@ describe('claim test', () => {
     expect(dt).toBeNull();
   });
 
-  it('raw slots', async () => {
+  it('raw slots', () => {
     const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withFlagUpdatable(true));
     const { index, value } = claim.rawSlots();
-    const indexHash = await poseidonHash([
+    const indexHash = poseidon.hash([
       index[0].toBigInt(),
       index[1].toBigInt(),
       index[2].toBigInt(),
       index[3].toBigInt()
     ]);
-    const valueHash = await poseidonHash([
+    const valueHash = poseidon.hash([
       value[0].toBigInt(),
       value[1].toBigInt(),
       value[2].toBigInt(),
@@ -57,7 +56,7 @@ describe('claim test', () => {
     );
   });
 
-  it('getSchemaHash', async () => {
+  it('getSchemaHash', () => {
     const sc = new SchemaHash(
       Uint8Array.from(Array.from({ length: 16 }, () => Math.floor(Math.random() * 16)))
     );
@@ -69,7 +68,7 @@ describe('claim test', () => {
     expect(Hex.encodeString(sc.bytes)).toEqual(shFromClaimHexBytes);
   });
 
-  it('getFlagUpdatable', async () => {
+  it('getFlagUpdatable', () => {
     const sc = new SchemaHash();
     let claim = Claim.newClaim(sc);
     expect(claim.getFlagUpdatable()).toBeFalsy();
@@ -87,7 +86,7 @@ describe('claim test', () => {
     expect(claim.getFlagUpdatable()).toBeFalsy();
   });
 
-  it('getVersion', async () => {
+  it('getVersion', () => {
     const sc = new SchemaHash();
     const maxUint32 = Math.pow(2, 32) - 1;
     const claim = Claim.newClaim(sc, ClaimOptions.withVersion(maxUint32));

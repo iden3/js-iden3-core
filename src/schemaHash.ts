@@ -1,4 +1,4 @@
-import { Hex } from './hex';
+import { Hex } from '@iden3/js-crypto';
 import { Constants } from './constants';
 import { BytesHelper } from './elemBytes';
 

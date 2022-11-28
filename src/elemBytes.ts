@@ -1,7 +1,7 @@
 import { Constants } from './constants';
 import { sha256 } from 'cross-sha256';
 import { checkBigIntInField, fromLittleEndian, toLittleEndian } from './utils';
-import { Hex } from './hex';
+import { Hex } from '@iden3/js-crypto';
 export class BytesHelper {
   static intToBytes(int: bigint): Uint8Array {
     return BytesHelper.intToNBytes(int, Constants.BYTES_LENGTH);

@@ -1,8 +1,9 @@
 import { Constants } from './constants';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const base58Js = require('base58-js');
-import { fromLittleEndian, poseidonHash } from './utils';
+import { fromLittleEndian } from './utils';
 import { BytesHelper, ElemBytes } from './elemBytes';
+import { poseidon } from '@iden3/js-crypto';
 
 // ID is a byte array with
 // [  type  | root_genesis | checksum ]
@@ -89,8 +90,8 @@ export class Id {
     return Id.fromBytes(b);
   }
 
-  static async profileId(id: Id, nonce: bigint): Promise<Id> {
-    const bigIntHash = await poseidonHash([id.bigInt(), nonce]);
+  static profileId(id: Id, nonce: bigint): Id {
+    const bigIntHash = poseidon.hash([id.bigInt(), nonce]);
     const { typ } = BytesHelper.decomposeBytes(id.bytes);
     const genesis = BytesHelper.intToNBytes(bigIntHash, 27);
     return new Id(typ, genesis);
