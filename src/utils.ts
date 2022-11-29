@@ -28,8 +28,8 @@ export function toLittleEndian(bigNumber: bigint, len = 31): Uint8Array {
   return result;
 }
 
-export function toBigEndian(bigNumber: bigint): Uint8Array {
-  return toLittleEndian(bigNumber).reverse();
+export function toBigEndian(bigNumber: bigint, len = 31): Uint8Array {
+  return toLittleEndian(bigNumber, len).reverse();
 }
 
 export function putUint32(n: number): Uint8Array {
