@@ -259,7 +259,7 @@ describe('claim test', () => {
       expect(claim).toEqual(expected);
 
       const result = expected.marshalJson();
-      expect(JSON.parse(input)).toEqual(JSON.parse(result));
+      expect(JSON.parse(input)).toEqual(result);
     });
 
     it('ClaimOptions.with binary', () => {

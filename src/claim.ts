@@ -484,8 +484,8 @@ export class Claim {
     return JSON.parse(JSON.stringify(this));
   }
 
-  marshalJson(): string {
-    return JSON.stringify(this.rawSlotsAsInts().map((b) => b.toString()));
+  marshalJson(): string[] {
+    return this.rawSlotsAsInts().map((b) => b.toString());
   }
 
   unMarshalJson(b: string): Claim {
