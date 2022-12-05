@@ -519,9 +519,10 @@ export class Claim {
     return Hex.encodeString(b);
   }
 
-  fromHex(hex: string): void {
+  fromHex(hex: string): Claim {
     const b = Hex.decodeString(hex);
     this.unMarshalBinary(b);
+    return this;
   }
 
   unMarshalBinary(data: Uint8Array): void {
