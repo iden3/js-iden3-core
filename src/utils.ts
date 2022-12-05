@@ -1,3 +1,4 @@
+import { poseidon } from '@iden3/js-crypto';
 import { Constants } from './constants';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 
@@ -44,16 +45,16 @@ export function getUint32(arr: Uint8Array): number {
   return new DataView(buf).getUint32(0, true);
 }
 
-export function putUint64(n: number): Uint8Array {
+export function putUint64(n: bigint): Uint8Array {
   const buf = new ArrayBuffer(8);
   const view = new DataView(buf);
-  view.setBigUint64(0, BigInt(n), true);
+  view.setBigUint64(0, n, true);
   return new Uint8Array(buf);
 }
 
-export function getUint64(arr: Uint8Array): number {
+export function getUint64(arr: Uint8Array): bigint {
   const buf = arr.buffer.slice(arr.byteOffset, arr.byteOffset + arr.byteLength);
-  return Number(new DataView(buf).getBigUint64(0, true));
+  return new DataView(buf).getBigUint64(0, true);
 }
 
 export function getUnixTimestamp(d: Date): number {
@@ -70,4 +71,10 @@ export function checkBigIntInField(a: bigint): boolean {
 
 export function checkBigIntArrayInField(arr: bigint[]): boolean {
   return arr.every((n) => checkBigIntInField(n));
+}
+
+// IdenState calculates the Identity State from the Claims Tree Root,
+// Revocation Tree Root and Roots Tree Root.
+export function idenState(clr: bigint, rer: bigint, ror: bigint): bigint {
+  return poseidon.hash([clr, rer, ror]);
 }

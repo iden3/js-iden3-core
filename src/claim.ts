@@ -12,7 +12,7 @@ import {
   putUint32,
   putUint64 as getBytesFromUint64
 } from './utils';
-import { poseidon } from '@iden3/js-crypto';
+import { Hex, poseidon } from '@iden3/js-crypto';
 
 /*
 Claim structure
@@ -312,7 +312,7 @@ export class Claim {
   getExpirationDate(): Date | null {
     if (this.getFlagExpiration()) {
       const unixTimestamp = getUint64(this._value[0].bytes.slice(8, 16));
-      return getDateFromUnixTimestamp(unixTimestamp);
+      return getDateFromUnixTimestamp(Number(unixTimestamp));
     }
     return null;
   }
@@ -320,18 +320,18 @@ export class Claim {
   // SetExpirationDate sets expiration date to dt
   setExpirationDate(dt: Date) {
     this.setFlagExpiration(true);
-    const bytes = getBytesFromUint64(getUnixTimestamp(dt));
+    const bytes = getBytesFromUint64(BigInt(getUnixTimestamp(dt)));
     const arr = Array.from(this._value[0].bytes);
     arr.splice(Constants.NONCE_BYTES_LENGTH, Constants.NONCE_BYTES_LENGTH, ...bytes);
     this._value[0] = new ElemBytes(Uint8Array.from(arr));
   }
 
   // GetRevocationNonce returns revocation nonce
-  getRevocationNonce(): number {
+  getRevocationNonce(): bigint {
     return getUint64(this._value[0].bytes.slice(0, 8));
   }
   // SetRevocationNonce sets claim's revocation nonce
-  setRevocationNonce(nonce: number): void {
+  setRevocationNonce(nonce: bigint): void {
     const bytes = getBytesFromUint64(nonce);
     if (bytes.length > Constants.NONCE_BYTES_LENGTH) {
       throw new Error('Nonce length is not valid');
@@ -513,6 +513,17 @@ export class Claim {
     return Uint8Array.from(getBytes(this._index).concat(getBytes(this._value)));
   }
 
+  // Hex returns hex representation of binary claim
+  hex(): string {
+    const b = this.marshalBinary();
+    return Hex.encodeString(b);
+  }
+
+  fromHex(hex: string): void {
+    const b = Hex.decodeString(hex);
+    this.unMarshalBinary(b);
+  }
+
   unMarshalBinary(data: Uint8Array): void {
     const wantLen = 2 * Constants.ELEM_BYTES_LENGTH * Constants.BYTES_LENGTH;
     if (data.length !== wantLen) {
@@ -576,7 +587,7 @@ export class ClaimOptions {
   }
 
   // WithRevocationNonce sets claim's revocation nonce.
-  static withRevocationNonce(nonce: number): ClaimOption {
+  static withRevocationNonce(nonce: bigint): ClaimOption {
     return (c: Claim) => c.setRevocationNonce(nonce);
   }
 

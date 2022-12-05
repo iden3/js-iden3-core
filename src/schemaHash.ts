@@ -30,7 +30,7 @@ export class SchemaHash {
   }
 
   marshalText(): string {
-    return new TextDecoder().decode(this.marshalTextBytes());
+    return Hex.encodeString(this.bytes);
   }
 
   /**
@@ -54,7 +54,7 @@ export class SchemaHash {
    * @returns
    */
   static newSchemaHashFromInt(i: bigint): SchemaHash {
-    return new SchemaHash(BytesHelper.intToBytes(i));
+    return new SchemaHash(BytesHelper.intToBytes(i).slice(-16));
   }
 
   /**

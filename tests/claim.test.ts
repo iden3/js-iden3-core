@@ -99,11 +99,11 @@ describe('claim test', () => {
   it('getRevocationNonce', () => {
     const sc = new SchemaHash();
     const nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    const claim = Claim.newClaim(sc, ClaimOptions.withRevocationNonce(nonce));
-    expect(nonce).toEqual(claim.getRevocationNonce());
+    const claim = Claim.newClaim(sc, ClaimOptions.withRevocationNonce(BigInt(nonce)));
+    expect(nonce.toString()).toEqual(claim.getRevocationNonce().toString());
     const nonce2 = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    claim.setRevocationNonce(nonce2);
-    expect(nonce2).toEqual(claim.getRevocationNonce());
+    claim.setRevocationNonce(BigInt(nonce2));
+    expect(nonce2.toString()).toEqual(claim.getRevocationNonce().toString());
   });
 
   it('expirationDate', () => {
