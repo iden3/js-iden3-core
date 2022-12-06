@@ -67,10 +67,13 @@ export function buildDIDType(
   if (!methodFn) {
     throw new Error(`method ${method} is not defined in core lib`);
   }
+
   const sb: number | undefined = methodFn[new DIDNetworkFlag(blockchain, network).toString()];
-  if (!sb) {
+
+  if (typeof sb !== 'number') {
     throw new Error(`blockchain ${blockchain} and network ${network} is not defined in core lib`);
   }
+
   return Uint8Array.from([fb, sb]);
 }
 

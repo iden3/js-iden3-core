@@ -1,4 +1,12 @@
-import { DID, NetworkId, DIDMethodByte, DidMethod, DIDOptions, Blockchain } from './../src/did';
+import {
+  DID,
+  NetworkId,
+  DIDMethodByte,
+  DidMethod,
+  DIDOptions,
+  Blockchain,
+  buildDIDType
+} from './../src/did';
 
 describe('DID tests', () => {
   const tests: {
@@ -37,9 +45,10 @@ describe('DID tests', () => {
   });
 
   it('parse DID', () => {
-    // did
     let didStr = 'did:iden3:polygon:mumbai:wyFiV4w71QgWPn6bYLsZoysFay66gKtVa9kfu6yMZ';
     let did = DID.parse(didStr);
+
+    buildDIDType(DidMethod.Iden3, Blockchain.NoChain, NetworkId.NoNetwork);
 
     expect('wyFiV4w71QgWPn6bYLsZoysFay66gKtVa9kfu6yMZ').toEqual(did.id.string());
     expect(NetworkId.Mumbai).toEqual(did.networkId);
