@@ -54,7 +54,9 @@ export class SchemaHash {
    * @returns
    */
   static newSchemaHashFromInt(i: bigint): SchemaHash {
-    return new SchemaHash(BytesHelper.intToBytes(i).slice(-16));
+    const bytes = BytesHelper.intToNBytes(i, Constants.SCHEMA.HASH_LENGTH);
+    const start = Constants.SCHEMA.HASH_LENGTH - bytes.length;
+    return new SchemaHash(BytesHelper.intToBytes(i).slice(start, Constants.SCHEMA.HASH_LENGTH));
   }
 
   /**
