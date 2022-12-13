@@ -18,6 +18,7 @@
     const claim = Iden3Core.Claim.newClaim(new Iden3Core.SchemaHash(), Iden3Core.ClaimOptions.withFlagUpdatable(true));
     const { index, value } = claim.rawSlots();
     console.log(index, value, claim);
+    console.log(claim.hIndex());
     console.assert(claim.value.length === 4);
 </script>
 
