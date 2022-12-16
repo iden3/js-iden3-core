@@ -17,10 +17,13 @@ export enum NetworkId {
 }
 
 export enum DidMethod {
-  Iden3 = 'iden3'
+  Iden3 = 'iden3',
+  PolygonId = 'polygonid'
 }
+
 export const DIDMethodByte: { [key: string]: number } = {
-  [DidMethod.Iden3]: 0b00000001
+  [DidMethod.Iden3]: 0b00000001,
+  [DidMethod.PolygonId]: 0b00000010
 };
 
 // DIDNetworkFlag is a structure to represent DID blockchain and network id
@@ -50,6 +53,11 @@ export const DIDMethodNetwork: {
     'polygon:mumbai': 0b00010000 | 0b00000010,
     'ethereum:main': 0b00100000 | 0b00000001,
     'ethereum:goerli': 0b00100000 | 0b00000010
+  },
+  [DidMethod.PolygonId]: {
+    '_:_': 0b00000000,
+    'polygon:main': 0b00010000 | 0b00000001,
+    'polygon:mumbai': 0b00010000 | 0b00000010
   }
 };
 
@@ -71,14 +79,18 @@ export function buildDIDType(
   const sb: number | undefined = methodFn[new DIDNetworkFlag(blockchain, network).toString()];
 
   if (typeof sb !== 'number') {
-    throw new Error(`blockchain ${blockchain} and network ${network} is not defined in core lib`);
+    throw new Error(
+      `blockchain ${blockchain.toString() ?? '-'} and network ${
+        network.toString() ?? '-'
+      } is not defined in core lib`
+    );
   }
 
   return Uint8Array.from([fb, sb]);
 }
 
 // FindNetworkIDForDIDMethodByValue finds network by byte value
-export function findNetworkIDForDIDMethodByValue(method: string, byteNumber: number): NetworkId {
+export function findNetworkIDForDIDMethodByValue(method: DidMethod, byteNumber: number): NetworkId {
   const methodMap = DIDMethodNetwork[method];
   if (!methodMap) {
     throw new Error(`did method ${method} is not defined in core lib`);
@@ -118,18 +130,6 @@ export function findDIDMethodByValue(byteNumber: number): DidMethod {
   throw new Error(`bytes ${byteNumber} are not defined in core lib as valid did method`);
 }
 
-export type DIDOption = (did: DID) => void;
-
-export class DIDOptions {
-  // WithNetwork sets Blockchain and NetworkID (eth:main)
-  static withNetwork(blockchain: Blockchain, network: NetworkId): DIDOption {
-    return (did: DID) => {
-      did.networkId = network;
-      did.blockchain = blockchain;
-    };
-  }
-}
-
 // DID Decentralized Identifiers (DIDs)
 // https://w3c.github.io/did-core/#did-syntax
 export class DID {
@@ -138,18 +138,25 @@ export class DID {
   public blockchain: Blockchain = Blockchain.NoChain;
   public networkId: NetworkId = NetworkId.NoNetwork;
 
+  // DIDGenesisFromIdenState calculates the genesis ID from an Identity State and returns it as DID
+  static fromGenesisFromIdenState(typ: Uint8Array, state: bigint): DID {
+    const id = Id.idGenesisFromIdenState(typ, state);
+    return DID.parseFromId(id);
+  }
+
   // toString did as a string
   toString(): string {
     if (this.blockchain == '') {
-      return [Constants.DID.DID_SCHEMA, DidMethod.Iden3, this.id.string()].join(':');
+      return [Constants.DID.DID_SCHEMA, this.method, this.id.string()].join(':');
     }
     return [
       Constants.DID.DID_SCHEMA,
-      DidMethod.Iden3,
+      this.method,
       this.blockchain,
       this.networkId,
       this.id.string()
     ]
+
       .filter((i) => !!i)
       .join(':');
   }
@@ -167,6 +174,10 @@ export class DID {
   // ParseDID method parse string and extract DID if string is valid Iden3 identifier
   static parse(s: string): DID {
     const args = s.split(':');
+    if (!args) {
+      throw new Error('did string is not valid');
+    }
+
     const did = new DID();
 
     did.method = args[1] as DidMethod;
@@ -224,13 +235,6 @@ export class DID {
         `blockchain network of core identity ${d.blockchain} differs from given did blockchain network ${did.blockchain}`
       );
     }
-    return did;
-  }
-
-  static newDID(didStr: string, ...args: DIDOption[]): DID {
-    const did = new DID();
-    did.id = Id.fromString(didStr);
-    args.filter((opt) => !!opt).forEach((arg) => arg(did));
     return did;
   }
 }
