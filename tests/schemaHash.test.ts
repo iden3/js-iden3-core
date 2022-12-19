@@ -1,5 +1,5 @@
 import { Hex } from '@iden3/js-crypto';
-import { SchemaHash, AUTH_SCHEMA_HASH } from '../src/schemaHash';
+import { SchemaHash } from '../src/schemaHash';
 describe('schema hash', () => {
   it('should return the hex value', () => {
     const source = Uint8Array.from([
@@ -15,9 +15,11 @@ describe('schema hash', () => {
     expect(actual).toEqual(expected);
   });
 
-  it('AUTH_SCHEMA_HASH', () => {
-    expect(AUTH_SCHEMA_HASH.bigInt().toString()).toEqual('80551937543569765027552589160822318028');
-    expect(AUTH_SCHEMA_HASH.marshalText()).toEqual('cca3371a6cb1b715004407e325bd993c');
+  it('auth schema hash', () => {
+    expect(SchemaHash.authSchemaHash.bigInt().toString()).toEqual(
+      '80551937543569765027552589160822318028'
+    );
+    expect(SchemaHash.authSchemaHash.marshalText()).toEqual('cca3371a6cb1b715004407e325bd993c');
   });
 
   it('new schema hash from hex', () => {
