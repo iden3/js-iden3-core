@@ -67,3 +67,12 @@ export class SchemaHash {
     return BytesHelper.bytesToInt(this.bytes);
   }
 }
+
+// AuthSchemaHash predefined value of auth schema, used for auth claim during identity creation.
+// This schema is hardcoded in the identity circuits and used to verify user's auth claim.
+// Keccak256(https://schema.iden3.io/core/jsonld/auth.jsonld#AuthBJJCredential) last 16 bytes
+// Hex: cca3371a6cb1b715004407e325bd993c
+// BigInt: 80551937543569765027552589160822318028
+export const AUTH_SCHEMA_HASH = new SchemaHash(
+  Uint8Array.from([204, 163, 55, 26, 108, 177, 183, 21, 0, 68, 7, 227, 37, 189, 153, 60])
+);

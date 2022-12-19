@@ -30,7 +30,6 @@ export const Constants = Object.freeze({
     ID_LENGTH: 31
   },
   DID: {
-    DID_SCHEMA: 'did',
-    DID_METHOD_IDEN3: 'iden3'
+    DID_SCHEMA: 'did'
   }
 });
