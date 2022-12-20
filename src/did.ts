@@ -174,7 +174,7 @@ export class DID {
   // ParseDID method parse string and extract DID if string is valid Iden3 identifier
   static parse(s: string): DID {
     const args = s.split(':');
-    if (!args) {
+    if (args.length <= 1) {
       throw new Error('did string is not valid');
     }
 
