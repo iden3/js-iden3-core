@@ -202,14 +202,14 @@ export class Claim {
   // SetValueDataInts sets data to value slots A & B.
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
   setValueDataInts(slotA: bigint | null, slotB: bigint | null): void {
-    this.setSlotInt(this._value[2], slotA, SlotName.ValueA);
-    this.setSlotInt(this._value[3], slotB, SlotName.ValueB);
+    this._value[2] = this.setSlotInt(slotA, SlotName.ValueA);
+    this._value[3] = this.setSlotInt(slotB, SlotName.ValueB);
   }
   // SetValueDataBytes sets data to value slots A & B.
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
   setValueDataBytes(slotA: Uint8Array, slotB: Uint8Array): void {
-    this.setSlotBytes(this._value[2], slotA, SlotName.ValueA);
-    this.setSlotBytes(this._value[3], slotB, SlotName.ValueB);
+    this._value[2] = this.setSlotBytes(slotA, SlotName.ValueA);
+    this._value[3] = this.setSlotBytes(slotB, SlotName.ValueB);
   }
   // SetValueData sets data to value slots A & B.
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
@@ -224,21 +224,22 @@ export class Claim {
   // SetIndexDataInts sets data to index slots A & B.
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
   setIndexDataInts(slotA: bigint | null, slotB: bigint | null): void {
-    this.setSlotInt(this._index[2], slotA, SlotName.IndexA);
-    this.setSlotInt(this._index[3], slotB, SlotName.IndexB);
+    this._index[2] = this.setSlotInt(slotA, SlotName.IndexA);
+    this._index[3] = this.setSlotInt(slotB, SlotName.IndexB);
   }
   // SetIndexDataBytes sets data to index slots A & B.
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
   setIndexDataBytes(slotA: Uint8Array | null, slotB: Uint8Array | null): void {
-    this.setSlotBytes(this._index[2], slotA, SlotName.IndexA);
-    this.setSlotBytes(this._index[3], slotB, SlotName.IndexB);
+    this._index[2] = this.setSlotBytes(slotA, SlotName.IndexA);
+    this._index[3] = this.setSlotBytes(slotB, SlotName.IndexB);
   }
 
-  private setSlotBytes(slot: ElemBytes, value: Uint8Array | null, slotName: SlotName) {
-    slot = new ElemBytes(value);
+  private setSlotBytes(value: Uint8Array | null, slotName: SlotName): ElemBytes {
+    const slot = new ElemBytes(value);
     if (!checkBigIntInField(slot.toBigInt())) {
       throw new ErrSlotOverflow(slotName);
     }
+    return slot;
   }
 
   setFlagMerklized(s: MerklizedRootPosition): void {
@@ -279,14 +280,14 @@ export class Claim {
     }
   }
 
-  public setSlotInt(slot: ElemBytes, value: bigint | null, slotName: SlotName): void {
+  public setSlotInt(value: bigint | null, slotName: SlotName): ElemBytes {
     if (!value) {
       value = BigInt(0);
     }
     if (!checkBigIntInField(value)) {
       throw new ErrSlotOverflow(slotName);
     }
-    slot.setBigInt(value);
+    return new ElemBytes().setBigInt(value);
   }
   // SetIndexData sets data to index slots A & B.
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
@@ -420,7 +421,7 @@ export class Claim {
   setIndexMerklizedRoot(r: bigint): void {
     this.resetValueMerklizedRoot();
     this.setFlagMerklized(MerklizedRootPosition.Index);
-    this.setSlotInt(this.index[2], r, SlotName.IndexA);
+    this.index[2] = this.setSlotInt(r, SlotName.IndexA);
   }
 
   resetIndexMerklizedRoot() {
@@ -431,7 +432,7 @@ export class Claim {
   setValueMerklizedRoot(r: bigint): void {
     this.resetIndexMerklizedRoot();
     this.setFlagMerklized(MerklizedRootPosition.Value);
-    this.setSlotInt(this.value[2], r, SlotName.ValueA);
+    this.value[2] = this.setSlotInt(r, SlotName.ValueA);
   }
   resetValueMerklizedRoot() {
     this._value[2] = new ElemBytes(new Uint8Array(Constants.BYTES_LENGTH).fill(0));
@@ -638,7 +639,7 @@ export class ClaimOptions {
   static withIndexMerklizedRoot(r: bigint): ClaimOption {
     return (c: Claim) => {
       c.setFlagMerklized(MerklizedRootPosition.Index);
-      c.setSlotInt(c.index[2], r, SlotName.IndexA);
+      c.index[2] = c.setSlotInt(r, SlotName.IndexA);
     };
   }
 
@@ -647,7 +648,7 @@ export class ClaimOptions {
   static withValueMerklizedRoot(r: bigint): ClaimOption {
     return (c: Claim) => {
       c.setFlagMerklized(MerklizedRootPosition.Value);
-      c.setSlotInt(c.value[2], r, SlotName.ValueA);
+      c.value[2] = c.setSlotInt(r, SlotName.ValueA);
     };
   }
 
@@ -658,11 +659,11 @@ export class ClaimOptions {
       switch (pos) {
         case MerklizedRootPosition.Index:
           c.setFlagMerklized(MerklizedRootPosition.Index);
-          c.setSlotInt(c.index[2], r, SlotName.IndexA);
+          c.index[2] = c.setSlotInt(r, SlotName.IndexA);
           break;
         case MerklizedRootPosition.Value:
           c.setFlagMerklized(MerklizedRootPosition.Value);
-          c.setSlotInt(c.value[2], r, SlotName.ValueA);
+          c.value[2] = c.setSlotInt(r, SlotName.ValueA);
           break;
         default:
           throw new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION);
