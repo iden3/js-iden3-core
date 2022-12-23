@@ -183,8 +183,10 @@ describe('claim test', () => {
 
     const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withIndexDataInts(value, null));
     expect(expSlot.bytes).toEqual(claim.index[2].bytes);
+    expect(new Uint8Array(32)).toEqual(claim.index[3].bytes);
 
     const claim2 = Claim.newClaim(new SchemaHash(), ClaimOptions.withIndexDataInts(null, value));
+    expect(new Uint8Array(32)).toEqual(claim2.index[2].bytes);
     expect(expSlot.bytes).toEqual(claim2.index[3].bytes);
   });
 
