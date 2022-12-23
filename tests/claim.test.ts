@@ -177,40 +177,75 @@ describe('claim test', () => {
   });
 
   it('index data ints', () => {
+    const value = BigInt(1024);
     const expSlot = new ElemBytes();
-    expSlot.setBigInt(BigInt(0));
-    const value = BigInt(64);
+    expSlot.setBigInt(value);
 
     const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withIndexDataInts(value, null));
-    expect(expSlot.bytes).toEqual(claim.index[3].bytes);
+    expect(expSlot.bytes).toEqual(claim.index[2].bytes);
+    expect(new Uint8Array(32)).toEqual(claim.index[3].bytes);
 
     const claim2 = Claim.newClaim(new SchemaHash(), ClaimOptions.withIndexDataInts(null, value));
-    expect(expSlot.bytes).toEqual(claim2.index[2].bytes);
+    expect(new Uint8Array(32)).toEqual(claim2.index[2].bytes);
+    expect(expSlot.bytes).toEqual(claim2.index[3].bytes);
   });
 
   it('value data ints', () => {
+    const value = BigInt(1024);
     const expSlot = new ElemBytes();
-    expSlot.setBigInt(BigInt(0));
-    const value = BigInt(64);
+    expSlot.setBigInt(value);
     const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withValueDataInts(value, null));
-    expect(expSlot.bytes).toEqual(claim.value[3].bytes);
+    expect(expSlot.bytes).toEqual(claim.value[2].bytes);
 
     const claim2 = Claim.newClaim(new SchemaHash(), ClaimOptions.withValueDataInts(null, value));
-    expect(expSlot.bytes).toEqual(claim2.value[2].bytes);
+    expect(expSlot.bytes).toEqual(claim2.value[3].bytes);
   });
 
   it('ClaimOptions.with index data bytes', () => {
     const iX = BigInt(
       '124482786795178117845085577341029868555797443843373384650556214865383112817'
     );
-    const expSlot = new ElemBytes();
-    expSlot.setBigInt(BigInt(0));
+    const expSlot = new ElemBytes().setBigInt(BigInt(iX));
 
     const claim = Claim.newClaim(
       new SchemaHash(),
-      ClaimOptions.withIndexDataBytes(BytesHelper.intToBytes(iX), null)
+      ClaimOptions.withIndexDataBytes(expSlot.bytes, null)
     );
-    expect(expSlot.bytes).toEqual(claim.index[3].bytes);
+    expect(expSlot.bytes).toEqual(claim.index[2].bytes);
+  });
+
+  it('proof case test', () => {
+    const expSlot = new ElemBytes();
+    expSlot.setBigInt(BigInt(0));
+
+    const indexA = new Uint8Array([
+      104, 146, 48, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0
+    ]);
+    const indexB = new Uint8Array([
+      99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0
+    ]);
+
+    const valueA = new Uint8Array([
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2
+    ]);
+
+    const valueB = new Uint8Array([
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      18
+    ]);
+
+    const claim = Claim.newClaim(
+      new SchemaHash(),
+      ClaimOptions.withIndexDataBytes(indexA, indexB),
+      ClaimOptions.withValueDataBytes(valueA, valueB)
+    );
+
+    expect(indexA).toEqual(claim.index[2].bytes);
+    expect(indexB).toEqual(claim.index[3].bytes);
+    expect(valueA).toEqual(claim.value[2].bytes);
+    expect(valueB).toEqual(claim.value[3].bytes);
   });
 
   describe('serialization', () => {
