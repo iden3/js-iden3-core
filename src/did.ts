@@ -93,14 +93,18 @@ export function buildDIDType(
 export function findNetworkIDForDIDMethodByValue(method: DidMethod, byteNumber: number): NetworkId {
   const methodMap = DIDMethodNetwork[method];
   if (!methodMap) {
-    throw new Error(`did method ${method} is not defined in core lib`);
+    throw new Error(
+      `${Constants.ERRORS.DID_METHOD_NOT_SUPPORTED}: did method ${method} is not defined in core lib`
+    );
   }
   for (const [key, value] of Object.entries(methodMap)) {
     if (value === byteNumber) {
       return DIDNetworkFlag.fromString(key).networkId;
     }
   }
-  return NetworkId.Unknown;
+  throw new Error(
+    `${Constants.ERRORS.DID_METHOD_NOT_SUPPORTED}: bytes ${byteNumber} for did method ${method} is not defined in core lib as a valid network identifer`
+  );
 }
 
 // findBlockchainForDIDMethodByValue finds blockchain type by byte value
@@ -110,14 +114,18 @@ export function findBlockchainForDIDMethodByValue(
 ): Blockchain {
   const methodMap = DIDMethodNetwork[method];
   if (!methodMap) {
-    throw new Error(`did method ${method} is not defined in core lib`);
+    throw new Error(
+      `${Constants.ERRORS.NETWORK_NOT_SUPPORTED_FOR_DID}: did method ${method} is not defined in core lib`
+    );
   }
   for (const [key, value] of Object.entries(methodMap)) {
     if (value === byteNumber) {
       return DIDNetworkFlag.fromString(key).blockchain;
     }
   }
-  return Blockchain.Unknown;
+  throw new Error(
+    `${Constants.ERRORS.NETWORK_NOT_SUPPORTED_FOR_DID}: bytes ${byteNumber} for did method ${method} is not defined in core lib as a valid blockchain network`
+  );
 }
 
 // findDIDMethodByValue finds did method by its byte value
@@ -127,7 +135,9 @@ export function findDIDMethodByValue(byteNumber: number): DidMethod {
       return key as DidMethod;
     }
   }
-  throw new Error(`bytes ${byteNumber} are not defined in core lib as valid did method`);
+  throw new Error(
+    `${Constants.ERRORS.DID_METHOD_NOT_SUPPORTED}: bytes ${byteNumber} are not defined in core lib as valid did method`
+  );
 }
 
 // DID Decentralized Identifiers (DIDs)
@@ -156,7 +166,6 @@ export class DID {
       this.networkId,
       this.id.string()
     ]
-
       .filter((i) => !!i)
       .join(':');
   }
@@ -175,7 +184,7 @@ export class DID {
   static parse(s: string): DID {
     const args = s.split(':');
     if (args.length <= 1) {
-      throw new Error('did string is not valid');
+      throw new Error(`${Constants.ERRORS.INVALID_DID}: did string is not valid`);
     }
 
     const did = new DID();
@@ -201,19 +210,23 @@ export class DID {
     // check did method defined in core lib
     const methodByte = DIDMethodByte[did.method];
     if (!methodByte) {
-      throw new Error(`DIDMethodByte: did method ${did.method} is not defined in core lib`);
+      throw new Error(
+        `${Constants.ERRORS.DID_METHOD_NOT_SUPPORTED}: DIDMethodByte: did method ${did.method} is not defined in core lib`
+      );
     }
 
     // check did network defined in core lib for did method
     const method = DIDMethodNetwork[did.method];
     if (!method) {
-      throw new Error(`DIDMethodNetwork: did method ${did.method} is not defined in core lib`);
+      throw new Error(
+        `${Constants.ERRORS.NETWORK_NOT_SUPPORTED_FOR_DID}: DIDMethodNetwork: did method ${did.method} is not defined in core lib`
+      );
     }
     const byte: number = method[new DIDNetworkFlag(did.blockchain, did.networkId).toString()];
 
     if (!byte?.toString()) {
       throw new Error(
-        `blockchain network "${did.blockchain} ${did.networkId}" is not defined for ${did.method} did method`
+        `${Constants.ERRORS.INVALID_DID}: blockchain network "${did.blockchain} ${did.networkId}" is not defined for ${did.method} did method`
       );
     }
 
@@ -222,17 +235,17 @@ export class DID {
 
     if (d.method !== did.method) {
       throw new Error(
-        `did method of core identity ${did.method} differs from given did method ${did.method}`
+        `${Constants.ERRORS.INVALID_DID}: did method of core identity ${did.method} differs from given did method ${did.method}`
       );
     }
     if (d.networkId !== did.networkId) {
       throw new Error(
-        `network method of core identity ${d.networkId} differs from given did network specific id ${did.networkId}`
+        `${Constants.ERRORS.INVALID_DID}: network method of core identity ${d.networkId} differs from given did network specific id ${did.networkId}`
       );
     }
     if (d.blockchain !== did.blockchain) {
       throw new Error(
-        `blockchain network of core identity ${d.blockchain} differs from given did blockchain network ${did.blockchain}`
+        `${Constants.ERRORS.INVALID_DID}: blockchain network of core identity ${d.blockchain} differs from given did blockchain network ${did.blockchain}`
       );
     }
     return did;

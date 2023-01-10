@@ -15,7 +15,13 @@ export const Constants = Object.freeze({
     // MerklizePositionIndex or MerklizePositionValue
     INCORRECT_MERKLIZED_POSITION: 'incorrect Merklize position',
     // ErrNoMerklizedRoot returns when Merklized Root is not found in the Claim.
-    NO_MERKLIZED_ROOT: 'Merklized root is not set'
+    NO_MERKLIZED_ROOT: 'Merklized root is not set',
+    // invalid did format.
+    INVALID_DID: 'invalid did format',
+    // unsupported did method.
+    DID_METHOD_NOT_SUPPORTED: 'did method is not supported',
+    // unsupported network for did.
+    NETWORK_NOT_SUPPORTED_FOR_DID: 'network in not supported for did'
   },
   SCHEMA: {
     HASH_LENGTH: 16
