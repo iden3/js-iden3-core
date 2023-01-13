@@ -1,6 +1,6 @@
 {
   "name": "@iden3/js-iden3-core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Low level API to create and manipulate iden3 Claims.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -8,11 +8,7 @@
   "esm:esbuild": "dist/esm_esbuild/index.js",
   "typings": "dist/types/index.d.ts",
   "files": [
-    "dist",
-    "config",
-    "scripts",
-    "src",
-    "tsconfig.json"
+    "dist"
   ],
   "scripts": {
     "clean": "rimraf ./dist",
