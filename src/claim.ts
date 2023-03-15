@@ -343,7 +343,7 @@ export class Claim {
   }
 
   getValueId(): Id {
-    return Id.fromBytes(this._value[1].bytes);
+    return Id.fromBytes(this._value[1].bytes.slice(0, -1));
   }
 
   // SetValueId sets id to value. Removes id from index if any.
@@ -364,7 +364,7 @@ export class Claim {
   }
 
   getIndexId(): Id {
-    return Id.fromBytes(this._index[1].bytes);
+    return Id.fromBytes(this._index[1].bytes.slice(0, -1));
   }
 
   // SetIndexId sets id to index. Removes id from value if any.

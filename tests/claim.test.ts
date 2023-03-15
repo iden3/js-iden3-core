@@ -554,4 +554,20 @@ describe('claim test', () => {
       );
     });
   });
+
+  it('set index ID value', () => {
+    const id = Id.fromString('ww9xPmW6U3k6XatpaPPWbqPgUqW2Ct6AhsGNuYGm2');
+    const claim = new Claim();
+    claim.setIndexId(id);
+    const expectedId = claim.getIndexId();
+    expect(id).toEqual(expectedId);
+  });
+
+  it('set value ID value', () => {
+    const id = Id.fromString('ww9xPmW6U3k6XatpaPPWbqPgUqW2Ct6AhsGNuYGm2');
+    const claim = new Claim();
+    claim.setValueId(id);
+    const expectedId = claim.getValueId();
+    expect(id).toEqual(expectedId);
+  });
 });
