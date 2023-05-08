@@ -108,4 +108,12 @@ export class Id {
     const idGenesisBytes = idenStateData.bytes.slice(idenStateData.bytes.length - 27);
     return new Id(typ, idGenesisBytes);
   }
+
+  static ethAddressFromId(id: Id): Uint8Array {
+    const isZeros = id.bytes.slice(2, 2 + 7).every((i: number) => i === 0);
+    if (!isZeros) {
+      throw new Error("can't get Ethereum address: high bytes of genesis are not zero");
+    }
+    return id.bytes.slice(2 + 7).slice(0, Constants.ETH_ADDRESS_LENGTH);
+  }
 }

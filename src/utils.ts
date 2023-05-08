@@ -78,3 +78,95 @@ export function checkBigIntArrayInField(arr: bigint[]): boolean {
 export function idenState(clr: bigint, rer: bigint, ror: bigint): bigint {
   return poseidon.hash([clr, rer, ror]);
 }
+
+export class StringUtils {
+  static isNotValidIDChar(char: string): boolean {
+    return (
+      StringUtils.isNotAlpha(char) && StringUtils.isNotDigit(char) && char !== '.' && char !== '-'
+    );
+  }
+
+  static isNotValidParamChar(char: string): boolean {
+    return (
+      StringUtils.isNotAlpha(char) &&
+      StringUtils.isNotDigit(char) &&
+      char !== '.' &&
+      char !== '-' &&
+      char !== '_' &&
+      char !== ':'
+    );
+  }
+
+  static isNotValidQueryOrFragmentChar(char: string): boolean {
+    return StringUtils.isNotValidPathChar(char) && char !== '/' && char !== '?';
+  }
+
+  static isNotValidPathChar(char: string): boolean {
+    return StringUtils.isNotUnreservedOrSubdelim(char) && char !== ':' && char !== '@';
+  }
+
+  static isNotUnreservedOrSubdelim(char: string): boolean {
+    switch (char) {
+      case '-':
+      case '.':
+      case '_':
+      case '~':
+      case '!':
+      case '$':
+      case '&':
+      case "'":
+      case '(':
+      case ')':
+      case '*':
+      case '+':
+      case ',':
+      case ';':
+      case '=':
+        return false;
+      default:
+        if (StringUtils.isNotAlpha(char) && StringUtils.isNotDigit(char)) {
+          return true;
+        }
+        return false;
+    }
+  }
+
+  static isNotHexDigit(char: string): boolean {
+    return (
+      StringUtils.isNotDigit(char) &&
+      (char < '\x41' || char > '\x46') &&
+      (char < '\x61' || char > '\x66')
+    );
+  }
+
+  static isNotDigit(char: string): boolean {
+    // '\x30' is digit 0, '\x39' is digit 9
+    return char < '\x30' || char > '\x39';
+  }
+
+  // StringUtils.isNotAlpha returns true if a byte is not a big letter between A-Z or small letter between a-z
+  // https://tools.ietf.org/html/rfc5234#appendix-B.1
+  static isNotAlpha(char: string): boolean {
+    return StringUtils.isNotSmallLetter(char) && StringUtils.isNotBigLetter(char);
+  }
+
+  // isNotBigLetter returns true if a byte is not a big letter between A-Z
+  // in US-ASCII http://www.columbia.edu/kermit/ascii.html
+  // https://tools.ietf.org/html/rfc5234#appendix-B.1
+  static isNotBigLetter(char: string): boolean {
+    // '\x41' is big letter A, '\x5A' small letter Z
+    return char < '\x41' || char > '\x5A';
+  }
+
+  // isNotSmallLetter returns true if a byte is not a small letter between a-z
+  // in US-ASCII http://www.columbia.edu/kermit/ascii.html
+  // https://tools.ietf.org/html/rfc5234#appendix-B.1
+  static isNotSmallLetter(char: string): boolean {
+    // '\x61' is small letter a, '\x7A' small letter z
+    return char < '\x61' || char > '\x7A';
+  }
+}
+
+export const genesisFromEthAddress = (addr: Uint8Array) => {
+  return Uint8Array.from([...new Uint8Array(7), ...addr]);
+};

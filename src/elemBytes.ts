@@ -93,7 +93,7 @@ export class ElemBytes {
 
   setBigInt(n: bigint): ElemBytes {
     if (!checkBigIntInField(n)) {
-      throw new Error(Constants.ERRORS.DATA_OVERFLOW);
+      throw Constants.ERRORS.DATA_OVERFLOW;
     }
     this._bytes = BytesHelper.intToBytes(n);
     return this;
@@ -126,7 +126,7 @@ export class ElemBytes {
 
   static fromInt(i: bigint): ElemBytes {
     if (!checkBigIntInField(i)) {
-      throw new Error(Constants.ERRORS.DATA_OVERFLOW);
+      throw Constants.ERRORS.DATA_OVERFLOW;
     }
     const bytes = BytesHelper.intToBytes(i);
     return new ElemBytes(bytes);

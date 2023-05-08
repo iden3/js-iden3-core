@@ -173,7 +173,7 @@ describe('claim test', () => {
       new ElemBytes().setBigInt(
         BigInt('9916243864111864693853212588481963275789994876191154110553066821559749894481761')
       )
-    ).toThrow(new Error(Constants.ERRORS.DATA_OVERFLOW));
+    ).toThrow(Constants.ERRORS.DATA_OVERFLOW);
   });
 
   it('index data ints', () => {
@@ -398,7 +398,7 @@ describe('claim test', () => {
             return c;
           },
           expectedPosition: IdPosition.None,
-          expectedError: new Error(Constants.ERRORS.INVALID_SUBJECT_POSITION)
+          expectedError: Constants.ERRORS.INVALID_SUBJECT_POSITION
         }
       ];
 
@@ -457,9 +457,7 @@ describe('claim test', () => {
       const c = Claim.newClaim(new SchemaHash());
       c.index[0].bytes[Flags.ByteIdx] &= 0b11111000;
       c.index[0].bytes[Flags.ByteIdx] |= MerklizedFlag.Invalid;
-      expect(() => c.getMerklizedPosition()).toThrow(
-        new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION)
-      );
+      expect(() => c.getMerklizedPosition()).toThrow(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION);
     });
 
     it('ClaimOptions.WithFlagMerklized', () => {
@@ -549,9 +547,7 @@ describe('claim test', () => {
 
       const position3 = claim3.getMerklizedPosition();
       expect(MerklizedRootPosition.None).toEqual(position3);
-      expect(() => claim3.getMerklizedRoot()).toThrow(
-        new Error(Constants.ERRORS.NO_MERKLIZED_ROOT)
-      );
+      expect(() => claim3.getMerklizedRoot()).toThrow(Constants.ERRORS.NO_MERKLIZED_ROOT);
     });
   });
 
