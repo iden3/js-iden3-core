@@ -118,7 +118,7 @@ export class DID {
     return { method, blockchain, networkId };
   }
 
-  static networkIDFromId(id: Id): NetworkId {
+  static networkIdFromId(id: Id): NetworkId {
     return DID.throwIfDIDUnsupported(id).networkId;
   }
 
@@ -145,7 +145,7 @@ export class DID {
   }
 
   // DIDGenesisFromIdenState calculates the genesis ID from an Identity State and returns it as DID
-  static genesisFromIdenState(typ: Uint8Array, state: bigint): DID {
+  static newFromIdenState(typ: Uint8Array, state: bigint): DID {
     const id = Id.idGenesisFromIdenState(typ, state);
 
     return DID.parseFromId(id);

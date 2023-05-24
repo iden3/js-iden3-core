@@ -10,7 +10,7 @@ export const helperBuildDIDFromType = (
   network: NetworkId
 ): DID => {
   const typ = buildDIDType(method, blockchain, network);
-  return DID.genesisFromIdenState(typ, 1n);
+  return DID.newFromIdenState(typ, 1n);
 };
 
 describe('DID tests', () => {
@@ -25,7 +25,7 @@ describe('DID tests', () => {
     expect(DidMethod.Iden3).toBe(method);
     let blockchain = DID.blockchainFromId(id);
     expect(Blockchain.Polygon).toBe(blockchain);
-    let networkId = DID.networkIDFromId(id);
+    let networkId = DID.networkIdFromId(id);
     expect(NetworkId.Mumbai).toBe(networkId);
 
     // readonly did
@@ -39,7 +39,7 @@ describe('DID tests', () => {
     expect(DidMethod.Iden3).toBe(method);
     blockchain = DID.blockchainFromId(id);
     expect(Blockchain.ReadOnly).toBe(blockchain);
-    networkId = DID.networkIDFromId(id);
+    networkId = DID.networkIdFromId(id);
     expect(NetworkId.NoNetwork).toBe(networkId);
 
     expect(Uint8Array.from([DidMethodByte[DidMethod.Iden3], 0b0])).toStrictEqual(id.type());
@@ -60,7 +60,7 @@ describe('DID tests', () => {
     expect(DidMethod.Iden3).toBe(method);
     const blockchain = DID.blockchainFromId(id2);
     expect(Blockchain.Polygon).toBe(blockchain);
-    const networkID = DID.networkIDFromId(id2);
+    const networkID = DID.networkIdFromId(id2);
     expect(NetworkId.Mumbai).toBe(networkID);
 
     expect(id).toStrictEqual(id2);
@@ -70,7 +70,7 @@ describe('DID tests', () => {
     const typ0 = buildDIDType(DidMethod.Iden3, Blockchain.ReadOnly, NetworkId.NoNetwork);
 
     const genesisState = BigInt(1);
-    const did2 = DID.genesisFromIdenState(typ0, genesisState);
+    const did2 = DID.newFromIdenState(typ0, genesisState);
 
     expect(DidMethod.Iden3).toBe(did2.method);
 
@@ -79,7 +79,7 @@ describe('DID tests', () => {
     expect(DidMethod.Iden3).toBe(method);
     const blockchain = DID.blockchainFromId(id);
     expect(Blockchain.ReadOnly).toBe(blockchain);
-    const networkID = DID.networkIDFromId(id);
+    const networkID = DID.networkIdFromId(id);
     expect(NetworkId.NoNetwork).toBe(networkID);
 
     expect('did:iden3:readonly:tJ93RwaVfE1PEMxd5rpZZuPtLCwbEaDCrNBhAy8HM').toBe(did2.string());
@@ -96,81 +96,74 @@ describe('DID tests', () => {
     expect('did:iden3:readonly:tJ93RwaVfE1PEMxd5rpZZuPtLCwbEaDCrNBhAy8HM').toBe(did2.string());
   });
 
-  it('TestDID_PolygonID_Types', () => {
-    // Polygon no chain, no network
-    const did1 = helperBuildDIDFromType(
-      DidMethod.PolygonId,
-      Blockchain.ReadOnly,
-      NetworkId.NoNetwork
-    );
+  describe('TestDID_PolygonID_Types', () => {
+    const testCases = [
+      {
+        title: 'Polygon no chain, no network',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.ReadOnly,
+        net: NetworkId.NoNetwork,
+        wantDID: 'did:polygonid:readonly:2mbH5rt9zKT1mTivFAie88onmfQtBU9RQhjNPLwFZh'
+      },
+      {
+        title: 'Polygon | Polygon chain, Main',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.Polygon,
+        net: NetworkId.Main,
+        wantDID: 'did:polygonid:polygon:main:2pzr1wiBm3Qhtq137NNPPDFvdk5xwRsjDFnMxpnYHm'
+      },
+      {
+        title: 'Polygon | Polygon chain, Mumbai',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.Polygon,
+        net: NetworkId.Mumbai,
+        wantDID: 'did:polygonid:polygon:mumbai:2qCU58EJgrELNZCDkSU23dQHZsBgAFWLNpNezo1g6b'
+      }
+    ];
 
-    expect(DidMethod.PolygonId).toBe(did1.method);
-    const id = DID.idFromDID(did1);
-    const method = DID.methodFromId(id);
-    expect(DidMethod.PolygonId).toBe(method);
-    const blockchain = DID.blockchainFromId(id);
-    expect(Blockchain.ReadOnly).toBe(blockchain);
-    const networkID = DID.networkIDFromId(id);
-    expect(NetworkId.NoNetwork).toBe(networkID);
-    expect('did:polygonid:readonly:2mbH5rt9zKT1mTivFAie88onmfQtBU9RQhjNPLwFZh').toBe(did1.string());
-
-    // Polygon | Polygon chain, NetworkId.Main
-    const did2 = helperBuildDIDFromType(DidMethod.PolygonId, Blockchain.Polygon, NetworkId.Main);
-
-    expect(DidMethod.PolygonId).toBe(did2.method);
-    const id2 = DID.idFromDID(did2);
-    const method2 = DID.methodFromId(id2);
-    expect(DidMethod.PolygonId).toBe(method2);
-    const blockchain2 = DID.blockchainFromId(id2);
-    expect(Blockchain.Polygon).toBe(blockchain2);
-    const networkID2 = DID.networkIDFromId(id2);
-    expect(NetworkId.Main).toBe(networkID2);
-    expect('did:polygonid:polygon:main:2pzr1wiBm3Qhtq137NNPPDFvdk5xwRsjDFnMxpnYHm').toBe(
-      did2.string()
-    );
-
-    // Polygon | Polygon chain, NetworkId.Mumbai
-    const did3 = helperBuildDIDFromType(DidMethod.PolygonId, Blockchain.Polygon, NetworkId.Mumbai);
-
-    expect(DidMethod.PolygonId).toBe(did3.method);
-    const id3 = DID.idFromDID(did3);
-    const method3 = DID.methodFromId(id3);
-    expect(DidMethod.PolygonId).toBe(method3);
-    const blockchain3 = DID.blockchainFromId(id3);
-    expect(Blockchain.Polygon).toBe(blockchain3);
-    const networkID3 = DID.networkIDFromId(id3);
-    expect(NetworkId.Mumbai).toBe(networkID3);
-    expect('did:polygonid:polygon:mumbai:2qCU58EJgrELNZCDkSU23dQHZsBgAFWLNpNezo1g6b').toBe(
-      did3.string()
-    );
+    for (let i = 0; i < testCases.length; i++) {
+      const tc = testCases[i];
+      it(tc.title, () => {
+        const did = helperBuildDIDFromType(tc.method, tc.chain, tc.net);
+        expect(tc.method).toEqual(did.method);
+        const id = DID.idFromDID(did);
+        const method = DID.methodFromId(id);
+        expect(tc.method).toEqual(method);
+        const blockchain = DID.blockchainFromId(id);
+        expect(tc.chain).toEqual(blockchain);
+        const networkID = DID.networkIdFromId(id);
+        expect(tc.net).toEqual(networkID);
+        expect(tc.wantDID).toEqual(did.string());
+      });
+    }
   });
 
   it('TestDID_PolygonID_DID.parseFromId', () => {
     const id1 = Id.fromString('2qCU58EJgrEM9NKvHkvg5NFWUiJPgN3M3LnCr98j3x');
 
-    const did1 = DID.parseFromId(id1);
+    const did = DID.parseFromId(id1);
 
     const addressBytesExp = Hex.decodeString('A51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0').slice(
       0,
       Constants.ETH_ADDRESS_LENGTH
     );
 
-    expect(DidMethod.PolygonId).toBe(did1.method);
+    expect(DidMethod.PolygonId).toBe(did.method);
     const wantIDs = ['polygon', 'mumbai', '2qCU58EJgrEM9NKvHkvg5NFWUiJPgN3M3LnCr98j3x'];
-    expect(wantIDs).toStrictEqual(did1.idStrings);
-    const id = DID.idFromDID(did1);
+    expect(wantIDs).toStrictEqual(did.idStrings);
+    const id = DID.idFromDID(did);
     const method = DID.methodFromId(id);
     expect(DidMethod.PolygonId).toBe(method);
     const blockchain = DID.blockchainFromId(id);
     expect(Blockchain.Polygon).toBe(blockchain);
-    const networkID = DID.networkIDFromId(id);
+    const networkID = DID.networkIdFromId(id);
     expect(NetworkId.Mumbai).toBe(networkID);
 
     const ethAddr = Id.ethAddressFromId(id);
     expect(addressBytesExp).toStrictEqual(ethAddr);
 
     expect('did:polygonid:polygon:mumbai:2qCU58EJgrEM9NKvHkvg5NFWUiJPgN3M3LnCr98j3x').toBe(
-      did1.string()
+      did.string()
     );
   });
 
@@ -186,11 +179,11 @@ describe('DID tests', () => {
 
     const s = `did:polygonid:polygon:mumbai:${id0.string()}`;
 
-    const did3 = DID.parse(s);
+    const did = DID.parse(s);
 
     const wantID = Id.fromString(wantIDHex);
 
-    const id = DID.idFromDID(did3);
+    const id = DID.idFromDID(did);
     expect(wantID).toStrictEqual(id);
 
     const method = DID.methodFromId(id);
@@ -199,7 +192,7 @@ describe('DID tests', () => {
     const blockchain = DID.blockchainFromId(id);
     expect(Blockchain.Polygon).toBe(blockchain);
 
-    const networkID = DID.networkIDFromId(id);
+    const networkID = DID.networkIdFromId(id);
     expect(NetworkId.Mumbai).toBe(networkID);
 
     const ethAddr = Id.ethAddressFromId(id);
