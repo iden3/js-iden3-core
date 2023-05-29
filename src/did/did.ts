@@ -151,6 +151,11 @@ export class DID {
     return DID.parseFromId(id);
   }
 
+  // NewDID creates a new *w3c.DID from the type and the genesis
+  static new(typ: Uint8Array, genesis: Uint8Array): DID {
+    return DID.parseFromId(new Id(typ, genesis));
+  }
+
   // ParseDIDFromID returns DID from ID
   static parseFromId(id: Id): DID {
     if (!BytesHelper.checkChecksum(id.bytes)) {
@@ -174,7 +179,7 @@ export class DID {
   static idFromDID(did: DID): Id {
     let id: Id;
     try {
-      id = DID.getidFromDID(did);
+      id = DID.getIdFromDID(did);
     } catch (error) {
       if ((error as Error).message === Constants.ERRORS.UNKNOWN_DID_METHOD.message) {
         return DID.idFromUnsupportedDID(did);
@@ -209,7 +214,7 @@ export class DID {
     return new Id(tp, genesis);
   }
 
-  private static getidFromDID(did: DID): Id {
+  private static getIdFromDID(did: DID): Id {
     const method = did.method;
     const methodByte = DidMethodByte[method];
     if (!methodByte || method === DidMethod.Other) {
