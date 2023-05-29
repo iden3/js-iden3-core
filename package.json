@@ -8,7 +8,11 @@
   "esm:esbuild": "dist/esm_esbuild/index.js",
   "typings": "dist/types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "tsconfig.json",
+    "scripts",
+    "config"
   ],
   "scripts": {
     "clean": "rimraf ./dist",
@@ -17,11 +21,11 @@
     "build:esm": "tsc -p config/tsconfig.esm.json",
     "build:umd": "node ./scripts/umd.config.js",
     "build:tsc": "tsc --module commonjs",
+    "postinstall": "npm run build",
     "test:coverage": "jest --coverage",
     "test": "jest",
     "tsc": "tsc",
     "test:watch": "jest --watch",
-    "semantic-release": "semantic-release",
     "lint": "eslint --fix --ext .js,.ts src/**",
     "format": "prettier --config .prettierrc './**/*.ts' --write"
   },
