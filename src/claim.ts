@@ -195,7 +195,7 @@ export class Claim {
       case SubjectFlag.OtherIdenValue:
         return IdPosition.Value;
       default:
-        throw new Error(Constants.ERRORS.INVALID_SUBJECT_POSITION);
+        throw Constants.ERRORS.INVALID_SUBJECT_POSITION;
     }
   }
 
@@ -216,7 +216,7 @@ export class Claim {
   setValueData(slotA: ElemBytes, slotB: ElemBytes): void {
     const slotsAsInts: bigint[] = [slotA.toBigInt(), slotB.toBigInt()];
     if (!checkBigIntArrayInField(slotsAsInts)) {
-      throw new Error(Constants.ERRORS.DATA_OVERFLOW);
+      throw Constants.ERRORS.DATA_OVERFLOW;
     }
     this._value[2] = slotA;
     this._value[3] = slotB;
@@ -276,7 +276,7 @@ export class Claim {
       case MerklizedFlag.Value:
         return MerklizedRootPosition.Value;
       default:
-        throw new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION);
+        throw Constants.ERRORS.INCORRECT_MERKLIZED_POSITION;
     }
   }
 
@@ -294,7 +294,7 @@ export class Claim {
   setIndexData(slotA: ElemBytes, slotB: ElemBytes) {
     const slotsAsInts: bigint[] = [slotA.toBigInt(), slotB.toBigInt()];
     if (!checkBigIntArrayInField(slotsAsInts)) {
-      throw new Error(Constants.ERRORS.DATA_OVERFLOW);
+      throw Constants.ERRORS.DATA_OVERFLOW;
     }
     this._index[2] = slotA;
     this._index[3] = slotB;
@@ -447,7 +447,7 @@ export class Claim {
       case MerklizedFlag.Value:
         return this.value[2].toBigInt();
       default:
-        throw new Error(Constants.ERRORS.NO_MERKLIZED_ROOT);
+        throw Constants.ERRORS.NO_MERKLIZED_ROOT;
     }
   }
 
@@ -466,7 +466,7 @@ export class Claim {
       case SubjectFlag.OtherIdenValue:
         return this.getValueId();
       default:
-        throw new Error(Constants.ERRORS.NO_ID);
+        throw Constants.ERRORS.NO_ID;
     }
   }
   // RawSlots returns raw bytes of claim's index and value
@@ -583,7 +583,7 @@ export class ClaimOptions {
           c.setValueId(id);
           break;
         default:
-          throw new Error(Constants.ERRORS.INCORRECT_ID_POSITION);
+          throw Constants.ERRORS.INCORRECT_ID_POSITION;
       }
     };
   }
@@ -666,7 +666,7 @@ export class ClaimOptions {
           c.value[2] = c.setSlotInt(r, SlotName.ValueA);
           break;
         default:
-          throw new Error(Constants.ERRORS.INCORRECT_MERKLIZED_POSITION);
+          throw Constants.ERRORS.INCORRECT_MERKLIZED_POSITION;
       }
     };
   }

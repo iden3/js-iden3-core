@@ -3,29 +3,30 @@ export const Constants = Object.freeze({
     // ErrDataOverflow means that given *big.Int value does not fit in Field Q
     // e.g. greater than Q constant:
     // Q constant: 21888242871839275222246405745257275088548364400416034343698204186575808495617
-    DATA_OVERFLOW: 'data does not fits SNARK size',
+    DATA_OVERFLOW: new Error('data does not fits SNARK size'),
     // ErrIncorrectIDPosition means that passed position is not one of predefined:
     // IDPositionIndex or IDPositionValue
-    INCORRECT_ID_POSITION: 'incorrect ID position',
+    INCORRECT_ID_POSITION: new Error('incorrect ID position'),
     // throws when ID not found in the Claim.
-    NO_ID: 'ID is not set',
+    NO_ID: new Error('ID is not set'),
     // throws when subject position flags sets in invalid value.
-    INVALID_SUBJECT_POSITION: 'invalid subject position',
+    INVALID_SUBJECT_POSITION: new Error('invalid subject position'),
     // ErrIncorrectMerklizePosition means that passed position is not one of predefined:
     // MerklizePositionIndex or MerklizePositionValue
-    INCORRECT_MERKLIZED_POSITION: 'incorrect Merklize position',
+    INCORRECT_MERKLIZED_POSITION: new Error('incorrect Merklize position'),
     // ErrNoMerklizedRoot returns when Merklized Root is not found in the Claim.
-    NO_MERKLIZED_ROOT: 'Merklized root is not set',
-    // invalid did format.
-    INVALID_DID: 'invalid did format',
-    // unsupported did method.
-    DID_METHOD_NOT_SUPPORTED: 'did method is not supported',
-    // unsupported network for did.
-    NETWORK_NOT_SUPPORTED_FOR_DID: 'network in not supported for did'
+    NO_MERKLIZED_ROOT: new Error('Merklized root is not set'),
+    NETWORK_NOT_SUPPORTED_FOR_DID: new Error('network in not supported for did'),
+    UNSUPPORTED_BLOCKCHAIN_FOR_DID: new Error('not supported blockchain for did'),
+    UNSUPPORTED_DID_METHOD: new Error('not supported DID method'),
+    UNKNOWN_DID_METHOD: new Error('unknown DID method'),
+    INCORRECT_DID: new Error('incorrect DID'),
+    UNSUPPORTED_ID: new Error('unsupported Id')
   },
   SCHEMA: {
     HASH_LENGTH: 16
   },
+  ETH_ADDRESS_LENGTH: 20,
   BYTES_LENGTH: 32,
   ELEM_BYTES_LENGTH: 4,
   NONCE_BYTES_LENGTH: 8,
@@ -37,5 +38,57 @@ export const Constants = Object.freeze({
   },
   DID: {
     DID_SCHEMA: 'did'
+  },
+  GENESIS_LENGTH: 27
+});
+
+export enum Blockchain {
+  Ethereum = 'eth',
+  Polygon = 'polygon',
+  Unknown = 'unknown',
+  NoChain = '',
+  ReadOnly = 'readonly'
+}
+
+export enum NetworkId {
+  Main = 'main',
+  Mumbai = 'mumbai',
+  Goerli = 'goerli',
+  Unknown = 'unknown',
+  NoNetwork = ''
+}
+
+export enum DidMethod {
+  Iden3 = 'iden3',
+  PolygonId = 'polygonid',
+  Other = ''
+}
+
+export const DidMethodByte: { [key: string]: number } = Object.freeze({
+  [DidMethod.Iden3]: 0b00000001,
+  [DidMethod.PolygonId]: 0b00000010,
+  [DidMethod.Other]: 0b11111111
+});
+
+// DIDMethodNetwork is map for did methods and their blockchain networks
+export const DidMethodNetwork: {
+  [k: string]: { [k: string]: number };
+} = Object.freeze({
+  [DidMethod.Iden3]: {
+    [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
+    [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
+    [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b00010000 | 0b00000010,
+    [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b00100000 | 0b00000001,
+    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010
+  },
+  [DidMethod.PolygonId]: {
+    [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
+    [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
+    [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b00010000 | 0b00000010,
+    [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b00100000 | 0b00000001,
+    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010
+  },
+  [DidMethod.Other]: {
+    [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b11111111
   }
 });

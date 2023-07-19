@@ -1,8 +1,8 @@
-import { Constants } from './../src/constants';
+import { Blockchain, Constants, DidMethod, NetworkId } from './../src/constants';
 import { Id } from '../src/id';
-import { Blockchain, buildDIDType, DidMethod, NetworkId } from '../src/did';
 import { BytesHelper } from '../src/elemBytes';
 import { Hex } from '@iden3/js-crypto';
+import { buildDIDType } from '../src/did';
 describe('id tests', () => {
   it('id parses', () => {
     // Generate ID0
@@ -40,11 +40,13 @@ describe('id tests', () => {
     expect(id1.bytes).toEqual(id1FromBytes.bytes);
     expect(id1.string()).toEqual(id1FromBytes.string());
     expect('1GYjyJKqdDyzo927FqJkAdLWB64kV2NVAjaQFHtq4').toEqual(id1FromBytes.string());
+    expect(id0FromBigInt.bytes).toEqual(id0FromBytes.bytes);
 
     const id1FromBigInt = Id.fromBigInt(id1.bigInt());
     expect(id1.bytes).toEqual(id1FromBytes.bytes);
     expect(id1.string()).toEqual(id1FromBytes.string());
     expect('1GYjyJKqdDyzo927FqJkAdLWB64kV2NVAjaQFHtq4').toEqual(id1FromBytes.string());
+    expect(id1FromBigInt.bytes).toEqual(id1FromBytes.bytes);
   });
 
   it('marshal/unmarshal', () => {
