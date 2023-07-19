@@ -64,7 +64,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@iden3/js-crypto": "1.0.0-beta.1",
+    "@iden3/js-crypto": "1.0.0",
     "base58-js": "^1.0.4",
     "cross-sha256": "^1.2.0"
   }
