@@ -45,6 +45,7 @@ export const Constants = Object.freeze({
 export enum Blockchain {
   Ethereum = 'eth',
   Polygon = 'polygon',
+  ZkEVM = 'zkevm',
   Unknown = 'unknown',
   NoChain = '',
   ReadOnly = 'readonly'
@@ -54,6 +55,8 @@ export enum NetworkId {
   Main = 'main',
   Mumbai = 'mumbai',
   Goerli = 'goerli',
+  Sepolia = 'sepolia',
+  Test = 'test',
   Unknown = 'unknown',
   NoNetwork = ''
 }
@@ -79,14 +82,20 @@ export const DidMethodNetwork: {
     [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
     [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b00010000 | 0b00000010,
     [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b00100000 | 0b00000001,
-    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010
+    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010,
+    [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b00100000 | 0b00000011,
+    [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b00110000 | 0b00000001,
+    [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b00110000 | 0b00000010
   },
   [DidMethod.PolygonId]: {
     [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
     [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
     [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b00010000 | 0b00000010,
     [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b00100000 | 0b00000001,
-    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010
+    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010,
+    [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b00100000 | 0b00000011,
+    [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b00110000 | 0b00000001,
+    [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b00110000 | 0b00000010
   },
   [DidMethod.Other]: {
     [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b11111111

@@ -118,6 +118,20 @@ describe('DID tests', () => {
         chain: Blockchain.Polygon,
         net: NetworkId.Mumbai,
         wantDID: 'did:polygonid:polygon:mumbai:2qCU58EJgrELNZCDkSU23dQHZsBgAFWLNpNezo1g6b'
+      },
+      {
+        title: 'Polygon | zkEVM chain, main',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.ZkEVM,
+        net: NetworkId.Main,
+        wantDID: 'did:polygonid:zkevm:main:2wQjmkL1SsgqC7AuZdUcaXsUVfEi1i58VEhm3r2r8F'
+      },
+      {
+        title: 'Polygon | zkEVM chain, test',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.ZkEVM,
+        net: NetworkId.Test,
+        wantDID: 'did:polygonid:zkevm:test:2wcMpvr8NgWTfqN6ChaFEx1qRnLREXhjeoJ45pFyw5'
       }
     ];
 
