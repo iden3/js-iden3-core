@@ -132,22 +132,36 @@ describe('DID tests', () => {
         chain: Blockchain.ZkEVM,
         net: NetworkId.Test,
         wantDID: 'did:polygonid:zkevm:test:2wcMpvr8NgWTfqN6ChaFEx1qRnLREXhjeoJ45pFyw5'
-      }
+      },
+      {
+        title: 'Polygon | Scroll chain, main',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.Scroll,
+        net: NetworkId.Main,
+        wantDID: 'did:polygonid:scroll:main:2zcgeedvHnptqkFqnm2jBCBFRcp5YrAq8EATbMf13V'
+      },
+      {
+        title: 'Polygon | Scroll chain, sepolia',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.Scroll,
+        net: NetworkId.Sepolia,
+        wantDID: 'did:polygonid:scroll:sepolia:2zpJhqA3DbeXKUT2Rq8MqcKcMjunmfoSHnkkdKt8rK'
+      },
     ];
 
     for (let i = 0; i < testCases.length; i++) {
       const tc = testCases[i];
       it(tc.title, () => {
         const did = helperBuildDIDFromType(tc.method, tc.chain, tc.net);
-        expect(tc.method).toEqual(did.method);
+        expect(did.method).toEqual(tc.method);
         const id = DID.idFromDID(did);
         const method = DID.methodFromId(id);
-        expect(tc.method).toEqual(method);
+        expect(method).toEqual(tc.method);
         const blockchain = DID.blockchainFromId(id);
-        expect(tc.chain).toEqual(blockchain);
+        expect(blockchain).toEqual(tc.chain);
         const networkID = DID.networkIdFromId(id);
-        expect(tc.net).toEqual(networkID);
-        expect(tc.wantDID).toEqual(did.string());
+        expect(networkID).toEqual(tc.net);
+        expect(did.string()).toEqual(tc.wantDID);
       });
     }
   });
