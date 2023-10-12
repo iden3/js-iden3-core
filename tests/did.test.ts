@@ -1,13 +1,13 @@
 import { Hex } from '@iden3/js-crypto';
-import { DID, buildDIDType } from '../src/did';
+import { DID, buildDIDType, addDIDMethodNetwork } from '../src/did';
 import { Id } from '../src/id';
 import { Blockchain, DidMethodByte, DidMethod, NetworkId, Constants } from './../src/constants';
 import { genesisFromEthAddress } from '../src/utils';
 
 export const helperBuildDIDFromType = (
   method: DidMethod,
-  blockchain: Blockchain,
-  network: NetworkId
+  blockchain: Blockchain | string,
+  network: NetworkId | string
 ): DID => {
   const typ = buildDIDType(method, blockchain, network);
   return DID.newFromIdenState(typ, 1n);
@@ -253,5 +253,32 @@ describe('DID tests', () => {
     expect(() => Id.ethAddressFromId(id)).toThrowError(
       "can't get Ethereum address: high bytes of genesis are not zero"
     );
+  });
+
+  it('TestAddDIDMethodNetwork', () => {
+    const blockchain = 'Awesomeness';
+    const network = NetworkId.Main;
+    const testCases = [
+      {
+        method: DidMethod.Iden3,
+        tp: 0b01010101,
+        wantDID: '2BKyhr5jMH2U24kYx67YrxA5CjaMP3DkDcd9aaDZuh'
+      },
+      {
+        method: DidMethod.PolygonId,
+        tp: 0b01010111,
+        wantDID: '352Mre4YhYtjMkVsrKAdkMMBxJyiQv4AkbAvLgdxoh'
+      }
+    ];
+    for (const { method, wantDID, tp } of testCases) {
+      expect(() => buildDIDType(method, blockchain, network)).toThrow('is not defined in core lib');
+      expect(() => helperBuildDIDFromType(method, blockchain, network)).toThrow(
+        'is not defined in core lib'
+      );
+      addDIDMethodNetwork(method, blockchain, network, tp);
+      expect(helperBuildDIDFromType(method, blockchain, network).string()).toStrictEqual(
+        `did:${method}:Awesomeness:main:${wantDID}`
+      );
+    }
   });
 });

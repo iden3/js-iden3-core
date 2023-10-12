@@ -9,7 +9,10 @@ import {
 
 // DIDNetworkFlag is a structure to represent DID blockchain and network id
 export class DIDNetworkFlag {
-  constructor(public readonly blockchain: Blockchain, public readonly networkId: NetworkId) {}
+  constructor(
+    public readonly blockchain: Blockchain | string,
+    public readonly networkId: NetworkId | string
+  ) {}
 
   toString(): string {
     return `${this.blockchain}:${this.networkId}`;
@@ -27,8 +30,8 @@ export class DIDNetworkFlag {
 // BuildDIDType builds bytes type from chain and network
 export function buildDIDType(
   method: DidMethod,
-  blockchain: Blockchain,
-  network: NetworkId
+  blockchain: Blockchain | string,
+  network: NetworkId | string
 ): Uint8Array {
   const fb = DidMethodByte[method];
   if (!fb) {
@@ -53,7 +56,10 @@ export function buildDIDType(
 }
 
 // FindNetworkIDForDIDMethodByValue finds network by byte value
-export function findNetworkIDForDIDMethodByValue(method: DidMethod, byteNumber: number): NetworkId {
+export function findNetworkIDForDIDMethodByValue(
+  method: DidMethod,
+  byteNumber: number
+): NetworkId | string {
   const methodMap = DidMethodNetwork[method];
   if (!methodMap) {
     throw Constants.ERRORS.UNSUPPORTED_DID_METHOD;
@@ -70,7 +76,7 @@ export function findNetworkIDForDIDMethodByValue(method: DidMethod, byteNumber: 
 export function findBlockchainForDIDMethodByValue(
   method: DidMethod,
   byteNumber: number
-): Blockchain {
+): Blockchain | string {
   const methodMap = DidMethodNetwork[method];
   if (!methodMap) {
     throw new Error(
@@ -93,4 +99,13 @@ export function findDIDMethodByValue(byteNumber: number): DidMethod {
     }
   }
   throw Constants.ERRORS.UNSUPPORTED_DID_METHOD;
+}
+
+export function addDIDMethodNetwork(
+  method: DidMethod,
+  blockchain: Blockchain | string,
+  network: NetworkId | string,
+  tp: number
+) {
+  DidMethodNetwork[method][`${blockchain}:${network}`] = tp;
 }
