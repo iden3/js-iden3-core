@@ -16,10 +16,11 @@ import {
 } from './did-helper';
 import { Parser } from './did-parser';
 import { IDID, Param } from './types';
-import { sha256 } from 'cross-sha256';
-
+import { sha256 } from '@iden3/js-crypto';
+import { encoder } from '../utils';
 // DID Decentralized Identifiers (DIDs)
 // https://w3c.github.io/did-core/#did-syntax
+
 export class DID {
   method = '';
   id = '';
@@ -199,7 +200,7 @@ export class DID {
   }
 
   static idFromUnsupportedDID(did: DID): Id {
-    const hash = Uint8Array.from(new sha256().update(did.string()).digest());
+    const hash = sha256(encoder.encode(did.string()));
 
     const genesis = new Uint8Array(27);
     const idSlice = hash.slice(hash.length - Constants.GENESIS_LENGTH);

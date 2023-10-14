@@ -1,7 +1,6 @@
 import { Constants } from './constants';
-import { sha256 } from 'cross-sha256';
-import { checkBigIntInField, fromLittleEndian, toLittleEndian } from './utils';
-import { Hex } from '@iden3/js-crypto';
+import { checkBigIntInField, fromLittleEndian, toLittleEndian, encoder } from './utils';
+import { Hex, sha256 } from '@iden3/js-crypto';
 export class BytesHelper {
   static intToBytes(int: bigint): Uint8Array {
     return BytesHelper.intToNBytes(int, Constants.BYTES_LENGTH);
@@ -43,13 +42,12 @@ export class BytesHelper {
   }
 
   static hashBytes(str: string): Uint8Array {
-    const hash = new sha256().update(str).digest();
+    const hash = sha256(encoder.encode(str));
     return new Uint8Array(hash);
   }
 
   static hexToBytes(str: string): Uint8Array {
-    const buffer = Buffer.from(str, 'hex');
-    return Uint8Array.from(buffer);
+    return Hex.decodeString(str);
   }
 
   static bytesToHex(bytes: Uint8Array) {

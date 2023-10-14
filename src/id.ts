@@ -1,9 +1,7 @@
 import { Constants } from './constants';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const base58Js = require('base58-js');
 import { fromLittleEndian } from './utils';
 import { BytesHelper, ElemBytes } from './elemBytes';
-import { poseidon } from '@iden3/js-crypto';
+import { poseidon, base58ToBytes, base58FromBytes } from '@iden3/js-crypto';
 
 // ID is a byte array with
 // [  type  | root_genesis | checksum ]
@@ -30,7 +28,7 @@ export class Id {
   }
 
   string(): string {
-    return base58Js.binary_to_base58(this._bytes);
+    return base58FromBytes(this._bytes);
   }
 
   get bytes(): Uint8Array {
@@ -81,7 +79,7 @@ export class Id {
   }
 
   static fromString(s: string): Id {
-    const bytes = base58Js.base58_to_binary(s);
+    const bytes = base58ToBytes(s);
     return Id.fromBytes(bytes);
   }
 
