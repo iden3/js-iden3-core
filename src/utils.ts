@@ -1,6 +1,7 @@
 import { poseidon } from '@iden3/js-crypto';
 import { Constants } from './constants';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+export const encoder = new TextEncoder();
 
 export function fromLittleEndian(bytes: Uint8Array): bigint {
   const n256 = BigInt(256);
