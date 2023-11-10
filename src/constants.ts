@@ -89,7 +89,10 @@ export const DidMethodNetwork: {
     [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010,
     [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b00100000 | 0b00000011,
     [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b00110000 | 0b00000001,
-    [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b00110000 | 0b00000010
+    [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b00110000 | 0b00000010,
+    [`${Blockchain.Redbelly}:${NetworkId.Mainnet}`]: 0b00111000 | 0b00000001,
+    [`${Blockchain.Redbelly}:${NetworkId.Devnet}`]: 0b00111000 | 0b00000010,
+    [`${Blockchain.Redbelly}:${NetworkId.Testnet}`]: 0b00111000 | 0b00000011,
   },
   [DidMethod.PolygonId]: {
     [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
