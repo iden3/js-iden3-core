@@ -1,5 +1,5 @@
 import {
-  BlockChainName,
+  BlockchainName,
   Constants,
   DidMethodByte,
   DidMethodName,
@@ -9,7 +9,7 @@ import {
 
 // DIDNetworkFlag is a structure to represent DID blockchain and network id
 export class DIDNetworkFlag {
-  constructor(public readonly blockchain: BlockChainName, public readonly networkId: NetworkName) {}
+  constructor(public readonly blockchain: BlockchainName, public readonly networkId: NetworkName) {}
 
   toString(): string {
     return `${this.blockchain}:${this.networkId}`;
@@ -66,7 +66,7 @@ export function findNetworkIDForDIDMethodByValue(
 export function findBlockchainForDIDMethodByValue(
   method: DidMethodName,
   byteNumber: number
-): BlockChainName {
+): BlockchainName {
   const methodMap = DidMethodNetwork[method];
   if (!methodMap) {
     throw new Error(

@@ -42,9 +42,9 @@ export const Constants = Object.freeze({
   GENESIS_LENGTH: 27
 });
 
-export type BlockChainName = 'eth' | 'polygon' | 'zkevm' | 'unknown' | 'readonly' | '' | string;
+export type BlockchainName = 'eth' | 'polygon' | 'zkevm' | 'unknown' | 'readonly' | '' | string;
 
-export const Blockchain: { [k: BlockChainName]: string } = {
+export const Blockchain: { [k: BlockchainName]: string } = {
   Ethereum: 'eth',
   Polygon: 'polygon',
   ZkEVM: 'zkevm',
@@ -54,8 +54,8 @@ export const Blockchain: { [k: BlockChainName]: string } = {
 };
 
 export const registerBlockchain = (
-  name: BlockChainName,
-  value: BlockChainName | null = null
+  name: BlockchainName,
+  value: BlockchainName | null = null
 ): void => {
   if (Blockchain[name]) {
     throw new Error(`blockchain ${name} already registered`);
@@ -155,7 +155,7 @@ export const DidMethodNetwork: {
 
 export const registerDidMethodNetwork = (
   method: DidMethodName,
-  blockchain: BlockChainName,
+  blockchain: BlockchainName,
   network: NetworkName,
   networkFlag: number
 ): void => {
@@ -174,6 +174,7 @@ export const registerDidMethodNetwork = (
   if (!DidMethodNetwork[method]) {
     DidMethodNetwork[method] = {};
   }
+
   const key = `${blockchain}:${network}`;
   if (DidMethodNetwork[method][key]) {
     throw new Error(`did method network ${key} already registered`);
@@ -216,20 +217,23 @@ export const registerDidMethodNetworkForce = (
     throw new Error(`did method network ${key} already registered`);
   }
   // get the biggest network flag
-  const biggestFlag = Object.values(DidMethodNetwork[method]).sort((sm, big) => big - sm)[0];
-  if (typeof biggestFlag !== 'number') {
+  const flags = Object.values(DidMethodNetwork[method]);
+  if (!flags.length) {
     DidMethodNetwork[method][key] = 0b00010000 | 0b00000001;
-  } else {
-    //get binary representation of biggest flag
-    const biggestFlagBinary = biggestFlag.toString(2).padStart(8, '0');
-    const chainPart = parseInt(biggestFlagBinary.slice(0, 4), 2) + 1;
-    const networkPart = parseInt(biggestFlagBinary.slice(4), 2) + 1;
-    if (chainPart > 0b1111) {
-      throw new Error(`Reached max number of blockchains for did method ${method}`);
-    }
-    if (networkPart > 0b1111) {
-      throw new Error(`Reached max number of networks for did method ${method}`);
-    }
-    DidMethodNetwork[method][key] = (chainPart << 4) | networkPart;
+    return;
   }
+  //get binary representation of biggest flag
+  const biggestFlag = flags.sort((sm, big) => big - sm)[0];
+  const chainPart = (biggestFlag >> 4) + 1;
+  const networkPart = (biggestFlag & 0b0000_1111) + 1;
+
+  if (chainPart >= 0b1111) {
+    throw new Error(`Reached max number of blockchains for did method ${method}`);
+  }
+
+  if (networkPart >= 0b1111) {
+    throw new Error(`Reached max number of networks for did method ${method}`);
+  }
+
+  DidMethodNetwork[method][key] = (chainPart << 4) | networkPart;
 };
