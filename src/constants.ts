@@ -42,41 +42,92 @@ export const Constants = Object.freeze({
   GENESIS_LENGTH: 27
 });
 
-export enum Blockchain {
-  Ethereum = 'eth',
-  Polygon = 'polygon',
-  ZkEVM = 'zkevm',
-  Unknown = 'unknown',
-  NoChain = '',
-  ReadOnly = 'readonly'
-}
+export type BlockChainName = 'eth' | 'polygon' | 'zkevm' | 'unknown' | 'readonly' | '' | string;
 
-export enum NetworkId {
-  Main = 'main',
-  Mumbai = 'mumbai',
-  Goerli = 'goerli',
-  Sepolia = 'sepolia',
-  Test = 'test',
-  Unknown = 'unknown',
-  NoNetwork = ''
-}
+export const Blockchain: { [k: BlockChainName]: string } = {
+  Ethereum: 'eth',
+  Polygon: 'polygon',
+  ZkEVM: 'zkevm',
+  Unknown: 'unknown',
+  NoChain: '',
+  ReadOnly: 'readonly'
+};
 
-export enum DidMethod {
-  Iden3 = 'iden3',
-  PolygonId = 'polygonid',
-  Other = ''
-}
+export const registerBlockchain = (
+  name: BlockChainName,
+  value: BlockChainName | null = null
+): void => {
+  if (Blockchain[name]) {
+    throw new Error(`blockchain ${name} already registered`);
+  }
+  Blockchain[name] = value ?? name;
+};
 
-export const DidMethodByte: { [key: string]: number } = Object.freeze({
+export type NetworkName =
+  | 'main'
+  | 'mumbai'
+  | 'goerli'
+  | 'sepolia'
+  | 'test'
+  | 'unknown'
+  | ''
+  | string;
+
+export const NetworkId: { [k: NetworkName]: NetworkName } = {
+  Main: 'main',
+  Mumbai: 'mumbai',
+  Goerli: 'goerli',
+  Sepolia: 'sepolia',
+  Test: 'test',
+  Unknown: 'unknown',
+  NoNetwork: ''
+};
+
+export const registerNetworkId = (name: NetworkName, value: NetworkName | null = null): void => {
+  if (NetworkId[name]) {
+    throw new Error(`network ${name} already registered`);
+  }
+  NetworkId[name] = value ?? name;
+};
+
+export type DidMethodName = 'iden3' | 'polygonid' | '' | string;
+
+export const DidMethod: { [k: DidMethodName]: DidMethodName } = {
+  Iden3: 'iden3',
+  PolygonId: 'polygonid',
+  Other: ''
+};
+
+export const registerDidMethod = (
+  name: DidMethodName,
+  value: DidMethodName | null = null
+): void => {
+  if (DidMethod[name]) {
+    throw new Error(`did method ${name} already registered`);
+  }
+  DidMethod[name] = value ?? name;
+};
+
+export const DidMethodByte: { [key: DidMethodName]: number } = {
   [DidMethod.Iden3]: 0b00000001,
   [DidMethod.PolygonId]: 0b00000010,
   [DidMethod.Other]: 0b11111111
-});
+};
+
+export const registerDidMethodByte = (name: DidMethodName, value: number): void => {
+  if (!DidMethod[name]) {
+    throw new Error(`did method ${name} not registered`);
+  }
+  if (DidMethodByte[name]) {
+    throw new Error(`did method byte ${name} already registered`);
+  }
+  DidMethodByte[name] = value;
+};
 
 // DIDMethodNetwork is map for did methods and their blockchain networks
 export const DidMethodNetwork: {
-  [k: string]: { [k: string]: number };
-} = Object.freeze({
+  [k: DidMethodName]: { [k: string]: number };
+} = {
   [DidMethod.Iden3]: {
     [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
     [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
@@ -100,4 +151,85 @@ export const DidMethodNetwork: {
   [DidMethod.Other]: {
     [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b11111111
   }
-});
+};
+
+export const registerDidMethodNetwork = (
+  method: DidMethodName,
+  blockchain: BlockChainName,
+  network: NetworkName,
+  networkFlag: number
+): void => {
+  if (!DidMethod[method]) {
+    throw new Error(`did method ${method} not registered`);
+  }
+
+  if (!Blockchain[blockchain]) {
+    throw new Error(`blockchain ${blockchain} not registered`);
+  }
+
+  if (!NetworkId[network]) {
+    throw new Error(`network ${network} not registered`);
+  }
+
+  if (!DidMethodNetwork[method]) {
+    DidMethodNetwork[method] = {};
+  }
+  const key = `${blockchain}:${network}`;
+  if (DidMethodNetwork[method][key]) {
+    throw new Error(`did method network ${key} already registered`);
+  }
+  DidMethodNetwork[method][key] = networkFlag;
+};
+
+export const registerDidMethodNetworkForce = (
+  method: string,
+  blockchain: string,
+  network: string
+): void => {
+  if (!DidMethod[method]) {
+    DidMethod[method] = method;
+  }
+
+  if (typeof DidMethodByte[method] !== 'number') {
+    const methodBytes = Object.values(DidMethodByte).sort((sm, big) => big - sm);
+    // take second of methodBytes because max byte is occupied by [DidMethod.Other]: 0b11111111
+    DidMethodByte[method] = methodBytes[1] + 0b1;
+    if (DidMethodByte[method] > 0b11111111) {
+      throw new Error(`did method byte ${method} already registered`);
+    }
+  }
+
+  if (!Blockchain[blockchain]) {
+    Blockchain[blockchain] = blockchain;
+  }
+
+  if (!NetworkId[network]) {
+    NetworkId[network] = network;
+  }
+
+  if (!DidMethodNetwork[method]) {
+    DidMethodNetwork[method] = {};
+  }
+  const key = `${blockchain}:${network}`;
+  const networkFlag = DidMethodNetwork[method][key];
+  if (typeof networkFlag === 'number') {
+    throw new Error(`did method network ${key} already registered`);
+  }
+  // get the biggest network flag
+  const biggestFlag = Object.values(DidMethodNetwork[method]).sort((sm, big) => big - sm)[0];
+  if (typeof biggestFlag !== 'number') {
+    DidMethodNetwork[method][key] = 0b00010000 | 0b00000001;
+  } else {
+    //get binary representation of biggest flag
+    const biggestFlagBinary = biggestFlag.toString(2).padStart(8, '0');
+    const chainPart = parseInt(biggestFlagBinary.slice(0, 4), 2) + 1;
+    const networkPart = parseInt(biggestFlagBinary.slice(4), 2) + 1;
+    if (chainPart > 0b1111) {
+      throw new Error(`Reached max number of blockchains for did method ${method}`);
+    }
+    if (networkPart > 0b1111) {
+      throw new Error(`Reached max number of networks for did method ${method}`);
+    }
+    DidMethodNetwork[method][key] = (chainPart << 4) | networkPart;
+  }
+};

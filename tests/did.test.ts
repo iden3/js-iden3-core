@@ -1,13 +1,25 @@
 import { Hex } from '@iden3/js-crypto';
 import { DID, buildDIDType } from '../src/did';
 import { Id } from '../src/id';
-import { Blockchain, DidMethodByte, DidMethod, NetworkId, Constants } from './../src/constants';
+import {
+  Blockchain,
+  DidMethodByte,
+  DidMethod,
+  NetworkId,
+  Constants,
+  registerBlockchain,
+  registerNetworkId,
+  registerDidMethod,
+  registerDidMethodByte,
+  registerDidMethodNetwork,
+  registerDidMethodNetworkForce
+} from './../src/constants';
 import { genesisFromEthAddress } from '../src/utils';
 
 export const helperBuildDIDFromType = (
-  method: DidMethod,
-  blockchain: Blockchain,
-  network: NetworkId
+  method: string,
+  blockchain: string,
+  network: string
 ): DID => {
   const typ = buildDIDType(method, blockchain, network);
   return DID.newFromIdenState(typ, 1n);
@@ -43,6 +55,34 @@ describe('DID tests', () => {
     expect(NetworkId.NoNetwork).toBe(networkId);
 
     expect(Uint8Array.from([DidMethodByte[DidMethod.Iden3], 0b0])).toStrictEqual(id.type());
+  });
+
+  it('Custom ParseDID', () => {
+    registerBlockchain('linea');
+    registerNetworkId('testnet');
+    registerDidMethod('linea');
+    registerDidMethodByte('linea', 0b00000011);
+    registerDidMethodNetwork('linea', Blockchain.linea, NetworkId.testnet, 0b0001_0001);
+    registerDidMethodNetworkForce('linea2', 'linea2', 'test');
+    registerDidMethodNetworkForce('linea2', 'linea2', 'test2');
+    registerDidMethodNetworkForce('linea2', 'linea2', 'test3');
+
+    const d = helperBuildDIDFromType('linea2', 'linea2', 'test');
+    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(d.string().split(':').pop());
+
+    // did
+    const didStr = 'did:linea:linea:testnet:3iHz4NemFhdiH4MzjTECwnAKX5HuXfSwR79Yezkfa7';
+
+    const did3 = DID.parse(didStr);
+    const id = DID.idFromDID(did3);
+
+    expect('3iHz4NemFhdiH4MzjTECwnAKX5HuXfSwR79Yezkfa7').toEqual(id.string());
+    const method = DID.methodFromId(id);
+    expect(DidMethod.linea).toBe(method);
+    const blockchain = DID.blockchainFromId(id);
+    expect(Blockchain.linea).toBe(blockchain);
+    const networkId = DID.networkIdFromId(id);
+    expect(NetworkId.testnet).toBe(networkId);
   });
 
   it('TestDID_UnmarshalJSON', () => {
