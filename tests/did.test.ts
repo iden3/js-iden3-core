@@ -1,20 +1,16 @@
 import { Hex } from '@iden3/js-crypto';
 import { DID, buildDIDType } from '../src/did';
 import { Id } from '../src/id';
+import { Blockchain, DidMethodByte, DidMethod, NetworkId, Constants } from './../src/constants';
+import { genesisFromEthAddress } from '../src/utils';
 import {
-  Blockchain,
-  DidMethodByte,
-  DidMethod,
-  NetworkId,
-  Constants,
   registerBlockchain,
   registerNetworkId,
   registerDidMethod,
   registerDidMethodByte,
   registerDidMethodNetwork,
-  registerDidMethodNetworkForce
-} from './../src/constants';
-import { genesisFromEthAddress } from '../src/utils';
+  registerDidMethodNetworkImplicit
+} from '../src/registration';
 
 export const helperBuildDIDFromType = (
   method: string,
@@ -58,31 +54,36 @@ describe('DID tests', () => {
   });
 
   it('Custom ParseDID', () => {
-    registerBlockchain('linea');
-    registerNetworkId('testnet');
-    registerDidMethod('linea');
-    registerDidMethodByte('linea', 0b00000011);
-    registerDidMethodNetwork('linea', Blockchain.linea, NetworkId.testnet, 0b0001_0001);
-    registerDidMethodNetworkForce('linea2', 'linea2', 'test');
-    registerDidMethodNetworkForce('linea2', 'linea2', 'test2');
-    registerDidMethodNetworkForce('linea2', 'linea2', 'test3');
+    // explicitly register all the things
+    registerBlockchain('Test Chain', 'test_chain');
+    registerNetworkId('Test Net', 'test_net');
+    registerDidMethod('Test method', 'test_method');
+    registerDidMethodByte('Test method', 0b00000011);
+    registerDidMethodNetwork('Test method', 'Test Chain', 'Test Net', 0b0001_0001);
+    // implicitly register all the things
+    registerDidMethodNetworkImplicit('method', 'chain', 'network');
+    registerDidMethodNetworkImplicit('iden3', 'chain', NetworkId.Test);
+    registerDidMethodNetworkImplicit('iden3', Blockchain.ReadOnly, 'network');
+    registerDidMethodNetworkImplicit('iden3', Blockchain.ReadOnly, NetworkId.Test);
+    registerDidMethodNetworkImplicit('method2', 'chain2', 'network2');
 
-    const d = helperBuildDIDFromType('linea2', 'linea2', 'test');
-    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(d.string().split(':').pop());
+    const d = helperBuildDIDFromType('method2', 'chain2', 'network2');
+    // const did = helperBuildDIDFromType('method', 'chain', 'network');
+    expect('5UtG9EXvF25j3X5uycwr4uy7Hjhni8bMposv3Lgv8o').toEqual(d.string().split(':').pop());
 
     // did
-    const didStr = 'did:linea:linea:testnet:3iHz4NemFhdiH4MzjTECwnAKX5HuXfSwR79Yezkfa7';
+    const didStr = 'did:method:chain:network:4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT';
 
     const did3 = DID.parse(didStr);
     const id = DID.idFromDID(did3);
 
-    expect('3iHz4NemFhdiH4MzjTECwnAKX5HuXfSwR79Yezkfa7').toEqual(id.string());
+    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(id.string());
     const method = DID.methodFromId(id);
-    expect(DidMethod.linea).toBe(method);
+    expect(DidMethod.method).toBe(method);
     const blockchain = DID.blockchainFromId(id);
-    expect(Blockchain.linea).toBe(blockchain);
+    expect(Blockchain.chain).toBe(blockchain);
     const networkId = DID.networkIdFromId(id);
-    expect(NetworkId.testnet).toBe(networkId);
+    expect(NetworkId.network).toBe(networkId);
   });
 
   it('TestDID_UnmarshalJSON', () => {
