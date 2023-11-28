@@ -6,10 +6,8 @@ import { genesisFromEthAddress } from '../src/utils';
 import {
   registerBlockchain,
   registerNetworkId,
-  registerDidMethod,
-  registerDidMethodByte,
-  registerDidMethodNetwork,
-  registerDidMethodNetworkImplicit
+  registerDidMethodWithByte,
+  registerDidMethodNetwork
 } from '../src/registration';
 
 export const helperBuildDIDFromType = (
@@ -57,15 +55,39 @@ describe('DID tests', () => {
     // explicitly register all the things
     registerBlockchain('test_chain');
     registerNetworkId('test_net');
-    registerDidMethod('test_method');
-    registerDidMethodByte('test_method', 0b00000011);
+    registerDidMethodWithByte('test_method', 0b00000011);
     registerDidMethodNetwork('test_method', 'test_chain', 'test_net', 0b0001_0001);
     // implicitly register all the things
-    registerDidMethodNetworkImplicit('method', 'chain', 'network');
-    registerDidMethodNetworkImplicit('iden3', 'chain', NetworkId.Test);
-    registerDidMethodNetworkImplicit('iden3', Blockchain.ReadOnly, 'network');
-    registerDidMethodNetworkImplicit('iden3', Blockchain.ReadOnly, NetworkId.Test);
-    registerDidMethodNetworkImplicit('method2', 'chain2', 'network2');
+    registerDidMethodWithByte('method', 0b0000_0100);
+    registerBlockchain('chain');
+    registerNetworkId('network');
+
+    registerDidMethodNetwork(DidMethod.method, Blockchain.chain, NetworkId.network, 0b0001_0001);
+    registerDidMethodNetwork(
+      DidMethod.Iden3,
+      Blockchain.chain,
+      NetworkId.Test,
+      0b01000000 | 0b00000011
+    );
+    registerDidMethodNetwork(
+      DidMethod.Iden3,
+      Blockchain.ReadOnly,
+      NetworkId.network,
+      0b01000000 | 0b00000011
+    );
+    expect(() =>
+      registerDidMethodNetwork(
+        DidMethod.Iden3,
+        Blockchain.ReadOnly,
+        NetworkId.network,
+        0b01010000 | 0b00000100
+      )
+    ).toThrowError('did method network readonly:network already registered');
+
+    registerDidMethodWithByte('method2', 0b0000_0101);
+    registerBlockchain('chain2');
+    registerNetworkId('network2');
+    registerDidMethodNetwork('method2', 'chain2', 'network2', 0b0001_0001);
 
     const d = helperBuildDIDFromType('method2', 'chain2', 'network2');
     // const did = helperBuildDIDFromType('method', 'chain', 'network');
