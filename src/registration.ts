@@ -9,14 +9,11 @@ import {
   NetworkName
 } from './constants';
 
-export const registerBlockchain = (
-  name: BlockchainName,
-  value: BlockchainName | null = null
-): void => {
-  if (Blockchain[name]) {
-    throw new Error(`blockchain ${name} already registered`);
+export const registerBlockchain = (chain: BlockchainName): void => {
+  if (Blockchain[chain]) {
+    throw new Error(`blockchain ${chain} already registered`);
   }
-  Blockchain[name] = value ?? name;
+  Blockchain[chain] = chain;
 };
 
 export const registerDidMethodByte = (name: DidMethodName, value: number): void => {
@@ -29,21 +26,18 @@ export const registerDidMethodByte = (name: DidMethodName, value: number): void 
   DidMethodByte[name] = value;
 };
 
-export const registerDidMethod = (
-  name: DidMethodName,
-  value: DidMethodName | null = null
-): void => {
-  if (DidMethod[name]) {
-    throw new Error(`did method ${name} already registered`);
+export const registerDidMethod = (method: DidMethodName): void => {
+  if (DidMethod[method]) {
+    throw new Error(`did method ${method} already registered`);
   }
-  DidMethod[name] = value ?? name;
+  DidMethod[method] = method;
 };
 
-export const registerNetworkId = (name: NetworkName, value: NetworkName | null = null): void => {
+export const registerNetworkId = (name: NetworkName): void => {
   if (NetworkId[name]) {
     throw new Error(`network ${name} already registered`);
   }
-  NetworkId[name] = value ?? name;
+  NetworkId[name] = name;
 };
 
 export const registerDidMethodNetwork = (
@@ -76,9 +70,9 @@ export const registerDidMethodNetwork = (
 };
 
 export const registerDidMethodNetworkImplicit = (
-  method: string,
-  blockchain: string,
-  network: string
+  method: DidMethodName,
+  blockchain: BlockchainName,
+  network: NetworkName
 ): void => {
   if (!DidMethod[method]) {
     DidMethod[method] = method;

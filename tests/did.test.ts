@@ -55,11 +55,11 @@ describe('DID tests', () => {
 
   it('Custom ParseDID', () => {
     // explicitly register all the things
-    registerBlockchain('Test Chain', 'test_chain');
-    registerNetworkId('Test Net', 'test_net');
-    registerDidMethod('Test method', 'test_method');
-    registerDidMethodByte('Test method', 0b00000011);
-    registerDidMethodNetwork('Test method', 'Test Chain', 'Test Net', 0b0001_0001);
+    registerBlockchain('test_chain');
+    registerNetworkId('test_net');
+    registerDidMethod('test_method');
+    registerDidMethodByte('test_method', 0b00000011);
+    registerDidMethodNetwork('test_method', 'test_chain', 'test_net', 0b0001_0001);
     // implicitly register all the things
     registerDidMethodNetworkImplicit('method', 'chain', 'network');
     registerDidMethodNetworkImplicit('iden3', 'chain', NetworkId.Test);
