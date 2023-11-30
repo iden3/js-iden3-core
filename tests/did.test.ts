@@ -3,12 +3,7 @@ import { DID, buildDIDType } from '../src/did';
 import { Id } from '../src/id';
 import { Blockchain, DidMethodByte, DidMethod, NetworkId, Constants } from './../src/constants';
 import { genesisFromEthAddress } from '../src/utils';
-import {
-  registerBlockchain,
-  registerNetworkId,
-  registerDidMethodWithByte,
-  registerDidMethodNetwork
-} from '../src/registration';
+import { registerDidMethodNetwork } from '../src/registration';
 
 export const helperBuildDIDFromType = (
   method: string,
@@ -52,42 +47,58 @@ describe('DID tests', () => {
   });
 
   it('Custom ParseDID', () => {
-    // explicitly register all the things
-    registerBlockchain('test_chain');
-    registerNetworkId('test_net');
-    registerDidMethodWithByte('test_method', 0b00000011);
-    registerDidMethodNetwork('test_method', 'test_chain', 'test_net', 0b0001_0001);
-    // implicitly register all the things
-    registerDidMethodWithByte('method', 0b0000_0100);
-    registerBlockchain('chain');
-    registerNetworkId('network');
+    registerDidMethodNetwork({
+      method: 'test_method',
+      blockchain: 'test_chain',
+      network: 'test_net',
+      chainId: 101,
+      methodByte: 0b00000011,
+      networkFlag: 0b0001_0001
+    });
 
-    registerDidMethodNetwork(DidMethod.method, Blockchain.chain, NetworkId.network, 0b0001_0001);
-    registerDidMethodNetwork(
-      DidMethod.Iden3,
-      Blockchain.chain,
-      NetworkId.Test,
-      0b01000000 | 0b00000011
-    );
-    registerDidMethodNetwork(
-      DidMethod.Iden3,
-      Blockchain.ReadOnly,
-      NetworkId.network,
-      0b01000000 | 0b00000011
-    );
+    registerDidMethodNetwork({
+      method: 'method',
+      blockchain: 'chain',
+      network: 'network',
+      chainId: 102,
+      methodByte: 0b0000_0100,
+      networkFlag: 0b0001_0001
+    });
+
+    registerDidMethodNetwork({
+      method: DidMethod.Iden3,
+      blockchain: Blockchain.chain,
+      network: NetworkId.Test,
+      chainId: 103,
+      networkFlag: 0b01000000 | 0b00000011
+    });
+
+    registerDidMethodNetwork({
+      method: DidMethod.Iden3,
+      blockchain: Blockchain.ReadOnly,
+      network: NetworkId.network,
+      chainId: 104,
+      networkFlag: 0b01000000 | 0b00000011
+    });
+
     expect(() =>
-      registerDidMethodNetwork(
-        DidMethod.Iden3,
-        Blockchain.ReadOnly,
-        NetworkId.network,
-        0b01010000 | 0b00000100
-      )
+      registerDidMethodNetwork({
+        method: DidMethod.Iden3,
+        blockchain: Blockchain.ReadOnly,
+        network: NetworkId.network,
+        chainId: 104,
+        networkFlag: 0b01000000 | 0b00000011
+      })
     ).toThrowError('did method network readonly:network already registered');
 
-    registerDidMethodWithByte('method2', 0b0000_0101);
-    registerBlockchain('chain2');
-    registerNetworkId('network2');
-    registerDidMethodNetwork('method2', 'chain2', 'network2', 0b0001_0001);
+    registerDidMethodNetwork({
+      method: 'method2',
+      blockchain: 'chain2',
+      network: 'network2',
+      chainId: 105,
+      methodByte: 0b0000_0101,
+      networkFlag: 0b0001_0001
+    });
 
     const d = helperBuildDIDFromType('method2', 'chain2', 'network2');
     // const did = helperBuildDIDFromType('method', 'chain', 'network');

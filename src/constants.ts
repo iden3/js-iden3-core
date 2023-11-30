@@ -81,6 +81,23 @@ export const DidMethod: { [k: DidMethodName]: DidMethodName } = {
   Other: ''
 };
 
+/**
+ * Object containing chain IDs for various blockchains and networks.
+ * @type { [key: string]: number }
+ */
+export const ChainIds: { [key: string]: number } = {
+  eth: 1,
+  'eth:main': 1,
+  'eth:goerli': 5,
+  'eth:sepolia': 11155111,
+  polygon: 137,
+  'polygon:main': 137,
+  'polygon:mumbai': 80001,
+  zkevm: 1101,
+  'zkevm:main': 1101,
+  'zkevm:test': 1442
+};
+
 export const DidMethodByte: { [key: DidMethodName]: number } = {
   [DidMethod.Iden3]: 0b00000001,
   [DidMethod.PolygonId]: 0b00000010,

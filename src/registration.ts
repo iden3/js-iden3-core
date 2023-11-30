@@ -1,6 +1,7 @@
 import {
   Blockchain,
   BlockchainName,
+  ChainIds,
   DidMethod,
   DidMethodByte,
   DidMethodName,
@@ -9,56 +10,66 @@ import {
   NetworkName
 } from './constants';
 
-export const registerBlockchain = (chain: BlockchainName): void => {
-  if (Object.values(Blockchain).includes(chain)) {
-    throw new Error(`blockchain ${chain} already registered`);
-  }
-  Blockchain[chain] = chain;
-};
-
-export const registerDidMethodWithByte = (method: DidMethodName, byte: number): void => {
-  if (Object.values(DidMethod).includes(method)) {
-    throw new Error(`did method ${method} already registered`);
-  }
+const registerDidMethodWithByte = (method: DidMethodName, byte?: number): void => {
   DidMethod[method] = method;
-  if (DidMethodByte[method]) {
+  if (typeof byte !== 'number') {
+    return;
+  }
+
+  if (typeof DidMethodByte[method] === 'number') {
     throw new Error(`did method byte ${method} already registered`);
   }
+
   DidMethodByte[method] = byte;
 };
 
-export const registerNetworkId = (network: NetworkName): void => {
-  if (Object.values(NetworkId).includes(network)) {
-    throw new Error(`network ${network} already registered`);
+const registerChainId = (blockchain: string, network: string, chainId?: number): void => {
+  if (!chainId) {
+    return;
   }
-  NetworkId[network] = network;
+
+  if (network) {
+    blockchain += `:${network}`;
+  }
+
+  ChainIds[blockchain] = chainId;
 };
 
-export const registerDidMethodNetwork = (
-  method: DidMethodName,
-  blockchain: BlockchainName,
-  network: NetworkName,
-  networkFlag: number
-): void => {
-  if (!Object.values(DidMethod).includes(method)) {
-    throw new Error(`did method ${method} not registered`);
+export const getChainId = (blockchain: string, network?: string): number => {
+  if (network) {
+    blockchain += `:${network}`;
   }
+  const chainId = ChainIds[blockchain];
+  if (!chainId) {
+    throw new Error(`chainId not found for ${blockchain}`);
+  }
+  return chainId;
+};
 
-  if (!Object.values(Blockchain).includes(blockchain)) {
-    throw new Error(`blockchain ${blockchain} not registered`);
-  }
-
-  if (!Object.values(NetworkId).includes(network)) {
-    throw new Error(`network ${network} not registered`);
-  }
-
-  if (typeof DidMethodByte[method] !== 'number') {
-    throw new Error(`did method byte for ${method} is not registered`);
-  }
+export const registerDidMethodNetwork = ({
+  method,
+  methodByte,
+  blockchain,
+  network,
+  chainId,
+  networkFlag
+}: {
+  method: DidMethodName;
+  methodByte?: number;
+  blockchain: BlockchainName;
+  network: NetworkName;
+  networkFlag: number;
+  chainId?: number;
+}): void => {
+  Blockchain[blockchain] = blockchain;
+  NetworkId[network] = network;
+  registerDidMethodWithByte(method, methodByte);
 
   if (!DidMethodNetwork[method]) {
     DidMethodNetwork[method] = {};
   }
+
+  registerChainId(blockchain, network, chainId);
 
   const key = `${blockchain}:${network}`;
   if (typeof DidMethodNetwork[method][key] === 'number') {
