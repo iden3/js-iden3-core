@@ -1,15 +1,8 @@
-import {
-  BlockchainName,
-  Constants,
-  DidMethodByte,
-  DidMethodName,
-  DidMethodNetwork,
-  NetworkName
-} from '../constants';
+import { Constants, DidMethodByte, DidMethodNetwork } from '../constants';
 
 // DIDNetworkFlag is a structure to represent DID blockchain and network id
 export class DIDNetworkFlag {
-  constructor(public readonly blockchain: BlockchainName, public readonly networkId: NetworkName) {}
+  constructor(public readonly blockchain: string, public readonly networkId: string) {}
 
   toString(): string {
     return `${this.blockchain}:${this.networkId}`;
@@ -46,10 +39,7 @@ export function buildDIDType(method: string, blockchain: string, network: string
 }
 
 // FindNetworkIDForDIDMethodByValue finds network by byte value
-export function findNetworkIDForDIDMethodByValue(
-  method: DidMethodName,
-  byteNumber: number
-): NetworkName {
+export function findNetworkIDForDIDMethodByValue(method: string, byteNumber: number): string {
   const methodMap = DidMethodNetwork[method];
   if (!methodMap) {
     throw Constants.ERRORS.UNSUPPORTED_DID_METHOD;
@@ -63,10 +53,7 @@ export function findNetworkIDForDIDMethodByValue(
 }
 
 // findBlockchainForDIDMethodByValue finds blockchain type by byte value
-export function findBlockchainForDIDMethodByValue(
-  method: DidMethodName,
-  byteNumber: number
-): BlockchainName {
+export function findBlockchainForDIDMethodByValue(method: string, byteNumber: number): string {
   const methodMap = DidMethodNetwork[method];
   if (!methodMap) {
     throw new Error(
@@ -82,7 +69,7 @@ export function findBlockchainForDIDMethodByValue(
 }
 
 // findDIDMethodByValue finds did method by its byte value
-export function findDIDMethodByValue(byteNumber: number): DidMethodName {
+export function findDIDMethodByValue(byteNumber: number): string {
   for (const [key, value] of Object.entries(DidMethodByte)) {
     if (value === byteNumber) {
       return key;

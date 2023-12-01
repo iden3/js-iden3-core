@@ -46,63 +46,107 @@ describe('DID tests', () => {
     expect(Uint8Array.from([DidMethodByte[DidMethod.Iden3], 0b0])).toStrictEqual(id.type());
   });
 
-  it('Custom ParseDID', () => {
-    registerDidMethodNetwork({
-      method: 'test_method',
-      blockchain: 'test_chain',
-      network: 'test_net',
-      chainId: 101,
-      methodByte: 0b00000011,
-      networkFlag: 0b0001_0001
-    });
+  it('Custom DID Registration', () => {
+    const testCases = [
+      {
+        description: 'register new did method network',
+        data: {
+          method: 'test_method',
+          blockchain: 'test_chain',
+          network: 'test_net',
+          chainId: 101,
+          methodByte: 0b00000011,
+          networkFlag: 0b0001_0001
+        }
+      },
+      {
+        description: 'register one more new did method network',
+        data: {
+          method: 'method',
+          blockchain: 'chain',
+          network: 'network',
+          chainId: 102,
+          methodByte: 0b0000_0100,
+          networkFlag: 0b0001_0001
+        }
+      },
+      {
+        description: 'register oexistind did method byte',
+        data: {
+          method: 'method',
+          blockchain: 'chain',
+          network: 'network',
+          chainId: 102,
+          methodByte: 0b0000_0100,
+          networkFlag: 0b0001_0001
+        },
+        error: 'did method method already registered'
+      },
+      {
+        description: 'register network to existing did method',
+        data: {
+          method: DidMethod.Iden3,
+          blockchain: 'chain',
+          network: NetworkId.Test,
+          chainId: 103,
+          networkFlag: 0b01000000 | 0b00000011
+        }
+      },
+      {
+        description: 'register one more network to existing did method',
+        data: {
+          method: DidMethod.Iden3,
+          blockchain: Blockchain.ReadOnly,
+          network: 'network',
+          chainId: 104,
+          networkFlag: 0b01000000 | 0b00000011
+        }
+      },
+      {
+        description: 'register already registered did method network',
+        data: {
+          method: DidMethod.Iden3,
+          blockchain: Blockchain.ReadOnly,
+          network: 'network',
+          networkFlag: 0b01000000 | 0b00000011
+        },
+        error: 'did method network readonly:network already registered'
+      },
+      {
+        description: 'register exited chain',
+        data: {
+          method: DidMethod.Iden3,
+          blockchain: Blockchain.ReadOnly,
+          network: 'network',
+          chainId: 104,
+          networkFlag: 0b01000000 | 0b00000011
+        },
+        error: 'chainId readonly:network already registered'
+      },
+      {
+        description: 'register known chain id to new did method',
+        data: {
+          method: 'method2',
+          blockchain: Blockchain.Polygon,
+          network: NetworkId.Mumbai,
+          methodByte: 0b0000_0101,
+          networkFlag: 0b0001_0001
+        }
+      }
+    ];
 
-    registerDidMethodNetwork({
-      method: 'method',
-      blockchain: 'chain',
-      network: 'network',
-      chainId: 102,
-      methodByte: 0b0000_0100,
-      networkFlag: 0b0001_0001
-    });
+    for (let i = 0; i < testCases.length; i++) {
+      const tc = testCases[i];
+      if (tc.error) {
+        expect(() => registerDidMethodNetwork(tc.data)).toThrowError(tc.error);
+      } else {
+        registerDidMethodNetwork(tc.data);
+      }
+    }
 
-    registerDidMethodNetwork({
-      method: DidMethod.Iden3,
-      blockchain: Blockchain.chain,
-      network: NetworkId.Test,
-      chainId: 103,
-      networkFlag: 0b01000000 | 0b00000011
-    });
-
-    registerDidMethodNetwork({
-      method: DidMethod.Iden3,
-      blockchain: Blockchain.ReadOnly,
-      network: NetworkId.network,
-      chainId: 104,
-      networkFlag: 0b01000000 | 0b00000011
-    });
-
-    expect(() =>
-      registerDidMethodNetwork({
-        method: DidMethod.Iden3,
-        blockchain: Blockchain.ReadOnly,
-        network: NetworkId.network,
-        chainId: 104,
-        networkFlag: 0b01000000 | 0b00000011
-      })
-    ).toThrowError('did method network readonly:network already registered');
-
-    registerDidMethodNetwork({
-      method: 'method2',
-      blockchain: 'chain2',
-      network: 'network2',
-      chainId: 105,
-      methodByte: 0b0000_0101,
-      networkFlag: 0b0001_0001
-    });
-
-    const d = helperBuildDIDFromType('method2', 'chain2', 'network2');
+    const d = helperBuildDIDFromType('method', 'chain', 'network');
     // const did = helperBuildDIDFromType('method', 'chain', 'network');
-    expect('5UtG9EXvF25j3X5uycwr4uy7Hjhni8bMposv3Lgv8o').toEqual(d.string().split(':').pop());
+    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(d.string().split(':').pop());
 
     // did
     const didStr = 'did:method:chain:network:4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT';

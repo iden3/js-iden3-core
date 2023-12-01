@@ -5,10 +5,7 @@ import {
   DidMethodByte,
   DidMethodNetwork,
   DidMethod,
-  NetworkId,
-  DidMethodName,
-  BlockchainName,
-  NetworkName
+  NetworkId
 } from '../constants';
 import { BytesHelper } from '../elemBytes';
 import {
@@ -110,9 +107,9 @@ export class DID {
   }
 
   static decodePartsFromId(id: Id): {
-    method: DidMethodName;
-    blockchain: BlockchainName;
-    networkId: NetworkName;
+    method: string;
+    blockchain: string;
+    networkId: string;
   } {
     const method = findDIDMethodByValue(id.bytes[0]);
     const blockchain = findBlockchainForDIDMethodByValue(method, id.bytes[1]);
@@ -122,22 +119,22 @@ export class DID {
     return { method, blockchain, networkId };
   }
 
-  static networkIdFromId(id: Id): NetworkName {
+  static networkIdFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).networkId;
   }
 
-  static methodFromId(id: Id): DidMethodName {
+  static methodFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).method;
   }
 
-  static blockchainFromId(id: Id): BlockchainName {
+  static blockchainFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).blockchain;
   }
 
   private static throwIfDIDUnsupported(id: Id): {
-    method: DidMethodName;
-    blockchain: BlockchainName;
-    networkId: NetworkName;
+    method: string;
+    blockchain: string;
+    networkId: string;
   } {
     const { method, blockchain, networkId } = DID.decodePartsFromId(id);
 
@@ -194,11 +191,7 @@ export class DID {
     return id;
   }
 
-  static isUnsupported(
-    method: DidMethodName,
-    blockchain: BlockchainName,
-    networkId: NetworkName
-  ): boolean {
+  static isUnsupported(method: string, blockchain: string, networkId: string): boolean {
     return (
       method == DidMethod.Other &&
       blockchain == Blockchain.Unknown &&

@@ -42,9 +42,7 @@ export const Constants = Object.freeze({
   GENESIS_LENGTH: 27
 });
 
-export type BlockchainName = 'eth' | 'polygon' | 'zkevm' | 'unknown' | 'readonly' | '' | string;
-
-export const Blockchain: { [k: BlockchainName]: string } = {
+export const Blockchain: { [k: string]: string } = {
   Ethereum: 'eth',
   Polygon: 'polygon',
   ZkEVM: 'zkevm',
@@ -53,17 +51,7 @@ export const Blockchain: { [k: BlockchainName]: string } = {
   ReadOnly: 'readonly'
 };
 
-export type NetworkName =
-  | 'main'
-  | 'mumbai'
-  | 'goerli'
-  | 'sepolia'
-  | 'test'
-  | 'unknown'
-  | ''
-  | string;
-
-export const NetworkId: { [k: NetworkName]: NetworkName } = {
+export const NetworkId: { [k: string]: string } = {
   Main: 'main',
   Mumbai: 'mumbai',
   Goerli: 'goerli',
@@ -73,9 +61,7 @@ export const NetworkId: { [k: NetworkName]: NetworkName } = {
   NoNetwork: ''
 };
 
-export type DidMethodName = 'iden3' | 'polygonid' | '' | string;
-
-export const DidMethod: { [k: DidMethodName]: DidMethodName } = {
+export const DidMethod: { [k: string]: string } = {
   Iden3: 'iden3',
   PolygonId: 'polygonid',
   Other: ''
@@ -86,19 +72,16 @@ export const DidMethod: { [k: DidMethodName]: DidMethodName } = {
  * @type { [key: string]: number }
  */
 export const ChainIds: { [key: string]: number } = {
-  eth: 1,
-  'eth:main': 1,
-  'eth:goerli': 5,
-  'eth:sepolia': 11155111,
-  polygon: 137,
-  'polygon:main': 137,
-  'polygon:mumbai': 80001,
-  zkevm: 1101,
-  'zkevm:main': 1101,
-  'zkevm:test': 1442
+  [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 1,
+  [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 5,
+  [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 11155111,
+  [`${Blockchain.Polygon}:${NetworkId.Main}`]: 137,
+  [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 80001,
+  [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 1101,
+  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442
 };
 
-export const DidMethodByte: { [key: DidMethodName]: number } = {
+export const DidMethodByte: { [key: string]: number } = {
   [DidMethod.Iden3]: 0b00000001,
   [DidMethod.PolygonId]: 0b00000010,
   [DidMethod.Other]: 0b11111111
@@ -106,7 +89,7 @@ export const DidMethodByte: { [key: DidMethodName]: number } = {
 
 // DIDMethodNetwork is map for did methods and their blockchain networks
 export const DidMethodNetwork: {
-  [k: DidMethodName]: { [k: string]: number };
+  [k: string]: { [k: string]: number };
 } = {
   [DidMethod.Iden3]: {
     [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
