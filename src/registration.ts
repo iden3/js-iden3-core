@@ -8,7 +8,7 @@ import {
 } from './constants';
 import { DID } from './did';
 
-const registerDidMethodWithByte = (method: string, byte: number): void => {
+export const registerDidMethod = (method: string, byte: number): void => {
   DidMethod[method] = method;
 
   if (typeof DidMethodByte[method] === 'number') {
@@ -112,7 +112,7 @@ export const registerDidMethodNetwork = ({
   Blockchain[blockchain] = blockchain;
   NetworkId[network] = network;
   if (typeof methodByte === 'number') {
-    registerDidMethodWithByte(method, methodByte);
+    registerDidMethod(method, methodByte);
   }
 
   if (!DidMethodNetwork[method]) {
