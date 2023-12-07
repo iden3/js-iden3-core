@@ -8,13 +8,32 @@ import {
 } from './constants';
 import { DID } from './did';
 
-export const registerDidMethod = (method: string, byte: number): void => {
-  DidMethod[method] = method;
+export const registerBlockchain = (blockchain: string): void => {
+  Blockchain[blockchain] = blockchain;
+};
 
-  if (typeof DidMethodByte[method] === 'number') {
-    throw new Error(`did method ${method} already registered`);
+export const registerNetwork = (network: string): void => {
+  NetworkId[network] = network;
+};
+
+export const registerDidMethod = (method: string, byte: number): void => {
+  const existingByte = DidMethodByte[method];
+  if (typeof DidMethodByte[method] === 'number' && existingByte !== byte) {
+    throw new Error(
+      `DID method '${method}' already registered with byte '${existingByte.toString(2)}'`
+    );
+  }
+  const max = DidMethodByte[DidMethod.Other];
+
+  if (byte >= max) {
+    throw new Error(
+      `Can't register DID method byte: current '${byte.toString(2)}', maximum byte allowed: '${(
+        max - 1
+      ).toString(2)}'`
+    );
   }
 
+  DidMethod[method] = method;
   DidMethodByte[method] = byte;
 };
 
@@ -29,8 +48,10 @@ export const registerDidMethod = (method: string, byte: number): void => {
 export const registerChainId = (blockchain: string, network: string, chainId: number): void => {
   const key = `${blockchain}:${network}`;
 
-  if (typeof ChainIds[key] === 'number') {
-    throw new Error(`chainId ${blockchain}:${network} already registered`);
+  if (typeof ChainIds[key] === 'number' && ChainIds[key] !== chainId) {
+    throw new Error(
+      `chainId '${blockchain}:${network}' already registered with value '${ChainIds[key]}'`
+    );
   }
 
   ChainIds[key] = chainId;
@@ -109,8 +130,8 @@ export const registerDidMethodNetwork = ({
   networkFlag: number;
   chainId?: number;
 }): void => {
-  Blockchain[blockchain] = blockchain;
-  NetworkId[network] = network;
+  registerBlockchain(blockchain);
+  registerNetwork(network);
   if (typeof methodByte === 'number') {
     registerDidMethod(method, methodByte);
   }
@@ -124,8 +145,13 @@ export const registerDidMethodNetwork = ({
   }
 
   const key = `${blockchain}:${network}`;
-  if (typeof DidMethodNetwork[method][key] === 'number') {
-    throw new Error(`did method network ${key} already registered`);
+  const existedFlag = DidMethodNetwork[method][key];
+  if (typeof existedFlag === 'number' && existedFlag !== networkFlag) {
+    throw new Error(
+      `DID method network '${method}' with blockchain '${blockchain}' and network '${network}' already registered with another flag '${existedFlag.toString(
+        2
+      )}'`
+    );
   }
   DidMethodNetwork[method][key] = networkFlag;
 };
