@@ -5,3 +5,4 @@ export * from './elemBytes';
 export * from './id';
 export * from './schemaHash';
 export * from './utils';
+export * from './registration';

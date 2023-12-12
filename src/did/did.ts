@@ -107,9 +107,9 @@ export class DID {
   }
 
   static decodePartsFromId(id: Id): {
-    method: DidMethod;
-    blockchain: Blockchain;
-    networkId: NetworkId;
+    method: string;
+    blockchain: string;
+    networkId: string;
   } {
     const method = findDIDMethodByValue(id.bytes[0]);
     const blockchain = findBlockchainForDIDMethodByValue(method, id.bytes[1]);
@@ -119,22 +119,22 @@ export class DID {
     return { method, blockchain, networkId };
   }
 
-  static networkIdFromId(id: Id): NetworkId {
+  static networkIdFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).networkId;
   }
 
-  static methodFromId(id: Id): DidMethod {
+  static methodFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).method;
   }
 
-  static blockchainFromId(id: Id): Blockchain {
+  static blockchainFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).blockchain;
   }
 
   private static throwIfDIDUnsupported(id: Id): {
-    method: DidMethod;
-    blockchain: Blockchain;
-    networkId: NetworkId;
+    method: string;
+    blockchain: string;
+    networkId: string;
   } {
     const { method, blockchain, networkId } = DID.decodePartsFromId(id);
 
@@ -191,7 +191,7 @@ export class DID {
     return id;
   }
 
-  static isUnsupported(method: DidMethod, blockchain: Blockchain, networkId: NetworkId): boolean {
+  static isUnsupported(method: string, blockchain: string, networkId: string): boolean {
     return (
       method == DidMethod.Other &&
       blockchain == Blockchain.Unknown &&

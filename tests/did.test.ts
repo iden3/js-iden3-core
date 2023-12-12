@@ -3,11 +3,12 @@ import { DID, buildDIDType } from '../src/did';
 import { Id } from '../src/id';
 import { Blockchain, DidMethodByte, DidMethod, NetworkId, Constants } from './../src/constants';
 import { genesisFromEthAddress } from '../src/utils';
+import { registerDidMethodNetwork } from '../src/registration';
 
 export const helperBuildDIDFromType = (
-  method: DidMethod,
-  blockchain: Blockchain,
-  network: NetworkId
+  method: string,
+  blockchain: string,
+  network: string
 ): DID => {
   const typ = buildDIDType(method, blockchain, network);
   return DID.newFromIdenState(typ, 1n);
@@ -254,4 +255,159 @@ describe('DID tests', () => {
       "can't get Ethereum address: high bytes of genesis are not zero"
     );
   });
+
+  it('TestCustomDIDRegistration', () => {
+    const testCases = [
+      {
+        description: 'register new did method network',
+        data: {
+          method: 'test_method',
+          blockchain: 'test_chain',
+          network: 'test_net',
+          networkFlag: 0b0001_0001,
+          chainId: 101,
+          methodByte: 0b00000011
+        }
+      },
+      {
+        description: 'register one more new did method network',
+        data: {
+          method: 'method',
+          blockchain: 'chain',
+          network: 'network',
+          networkFlag: 0b0001_0001,
+          chainId: 102,
+          methodByte: 0b00000100
+        }
+      },
+      {
+        description: 'register the same new did method network',
+        data: {
+          method: 'method',
+          blockchain: 'chain',
+          network: 'network',
+          networkFlag: 0b0001_0001,
+          chainId: 102,
+          methodByte: 0b00000100
+        }
+      },
+      {
+        description: 'register network to existing did method',
+        data: {
+          method: DidMethod.Iden3,
+          blockchain: 'chain',
+          network: NetworkId.Test,
+          networkFlag: 0b01000000 | 0b00000011,
+          chainId: 103
+        }
+      },
+      {
+        description: 'register network to existing did method and chainId',
+        data: {
+          method: DidMethod.Iden3,
+          blockchain: Blockchain.ReadOnly,
+          network: NetworkId.NoNetwork,
+          networkFlag: 0b00000000,
+          chainId: 103
+        }
+      },
+      {
+        description: 'register one more network to existing did method',
+        data: {
+          method: DidMethod.Iden3,
+          blockchain: Blockchain.ReadOnly,
+          network: 'network',
+          networkFlag: 0b01000000 | 0b00000011,
+          chainId: 104
+        }
+      },
+      {
+        description: 'register known chain id to new did method',
+        data: {
+          method: 'method2',
+          blockchain: Blockchain.Polygon,
+          network: NetworkId.Mumbai,
+          networkFlag: 0b0001_0001,
+          methodByte: 0b0000001
+        }
+      }
+    ];
+
+    for (let i = 0; i < testCases.length; i++) {
+      const tc = testCases[i];
+      expect(() => registerDidMethodNetwork(tc.data)).not.toThrow();
+    }
+
+    const d = helperBuildDIDFromType('method', 'chain', 'network');
+    // const did = helperBuildDIDFromType('method', 'chain', 'network');
+    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(d.string().split(':').pop());
+
+    // did
+    const didStr = 'did:method:chain:network:4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT';
+
+    const did3 = DID.parse(didStr);
+    const id = DID.idFromDID(did3);
+
+    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(id.string());
+    const method = DID.methodFromId(id);
+    expect(DidMethod.method).toBe(method);
+    const blockchain = DID.blockchainFromId(id);
+    expect(Blockchain.chain).toBe(blockchain);
+    const networkId = DID.networkIdFromId(id);
+    expect(NetworkId.network).toBe(networkId);
+  });
+
+  const testCases = [
+    {
+      description: 'try to overwrite existing chain id',
+      data: {
+        method: DidMethod.Iden3,
+        blockchain: Blockchain.Polygon,
+        network: NetworkId.Mumbai,
+        networkFlag: 0b0001_0001,
+        chainId: 1
+      },
+      err: "chainId 'polygon:mumbai' already registered with value '80001'"
+    },
+    {
+      description: 'try to overwrite existing DID method byte',
+      data: {
+        method: DidMethod.Iden3,
+        blockchain: Blockchain.Ethereum,
+        network: NetworkId.Main,
+        networkFlag: 0b00100000 | 0b00000001,
+        chainId: 1,
+        methodByte: 0b00000010
+      },
+      err: "DID method 'iden3' already registered with byte '1'"
+    },
+    {
+      description: 'try to write max did method byte',
+      data: {
+        method: 'method33',
+        blockchain: Blockchain.Ethereum,
+        network: NetworkId.Main,
+        networkFlag: 0b00100000 | 0b00000001,
+        chainId: 1,
+        methodByte: 0b11111111
+      },
+      err: "Can't register DID method byte: current '11111111', maximum byte allowed: '11111110'"
+    },
+    {
+      description: 'try to rewrite existing DID Method Network Flag',
+      data: {
+        method: DidMethod.Iden3,
+        blockchain: Blockchain.Ethereum,
+        network: NetworkId.Main,
+        networkFlag: 0b00100000 | 0b00000011
+      },
+      err: "DID method network 'iden3' with blockchain 'eth' and network 'main' already registered with another flag '100001'"
+    }
+  ];
+  for (let i = 0; i < testCases.length; i++) {
+    const tc = testCases[i];
+    it(tc.description, () => {
+      expect(() => registerDidMethodNetwork(tc.data)).toThrowError(tc.err);
+    });
+  }
 });

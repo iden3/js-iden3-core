@@ -42,41 +42,55 @@ export const Constants = Object.freeze({
   GENESIS_LENGTH: 27
 });
 
-export enum Blockchain {
-  Ethereum = 'eth',
-  Polygon = 'polygon',
-  ZkEVM = 'zkevm',
-  Unknown = 'unknown',
-  NoChain = '',
-  ReadOnly = 'readonly'
-}
+export const Blockchain: { [k: string]: string } = {
+  Ethereum: 'eth',
+  Polygon: 'polygon',
+  ZkEVM: 'zkevm',
+  Unknown: 'unknown',
+  NoChain: '',
+  ReadOnly: 'readonly'
+};
 
-export enum NetworkId {
-  Main = 'main',
-  Mumbai = 'mumbai',
-  Goerli = 'goerli',
-  Sepolia = 'sepolia',
-  Test = 'test',
-  Unknown = 'unknown',
-  NoNetwork = ''
-}
+export const NetworkId: { [k: string]: string } = {
+  Main: 'main',
+  Mumbai: 'mumbai',
+  Goerli: 'goerli',
+  Sepolia: 'sepolia',
+  Test: 'test',
+  Unknown: 'unknown',
+  NoNetwork: ''
+};
 
-export enum DidMethod {
-  Iden3 = 'iden3',
-  PolygonId = 'polygonid',
-  Other = ''
-}
+export const DidMethod: { [k: string]: string } = {
+  Iden3: 'iden3',
+  PolygonId: 'polygonid',
+  Other: ''
+};
 
-export const DidMethodByte: { [key: string]: number } = Object.freeze({
+/**
+ * Object containing chain IDs for various blockchains and networks.
+ * @type { [key: string]: number }
+ */
+export const ChainIds: { [key: string]: number } = {
+  [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 1,
+  [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 5,
+  [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 11155111,
+  [`${Blockchain.Polygon}:${NetworkId.Main}`]: 137,
+  [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 80001,
+  [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 1101,
+  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442
+};
+
+export const DidMethodByte: { [key: string]: number } = {
   [DidMethod.Iden3]: 0b00000001,
   [DidMethod.PolygonId]: 0b00000010,
   [DidMethod.Other]: 0b11111111
-});
+};
 
 // DIDMethodNetwork is map for did methods and their blockchain networks
 export const DidMethodNetwork: {
   [k: string]: { [k: string]: number };
-} = Object.freeze({
+} = {
   [DidMethod.Iden3]: {
     [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
     [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
@@ -100,4 +114,4 @@ export const DidMethodNetwork: {
   [DidMethod.Other]: {
     [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b11111111
   }
-});
+};
