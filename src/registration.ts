@@ -150,16 +150,23 @@ export const registerDidMethodNetwork = ({
   const key = `${blockchain}:${network}`;
 
   const existedFlag = DidMethodNetwork[method][key];
-  if (typeof existedFlag === 'number' && existedFlag !== networkFlag) {
-    throw new Error(
-      `DID method network '${method}' with blockchain '${blockchain}' and network '${network}' already registered with another flag '${existedFlag.toString(
-        2
-      )}'`
-    );
-  }
-
-  if (Object.values(DidMethodNetwork[method]).includes(networkFlag)) {
-    throw new Error(`DID network flag  ${DidMethodNetwork[method][key]} is already registered`);
+  if (typeof existedFlag === 'number') {
+    const isSameFlag = existedFlag === networkFlag;
+    if (!isSameFlag) {
+      throw new Error(
+        `DID method network '${method}' with blockchain '${blockchain}' and network '${network}' already registered with another flag '${existedFlag.toString(
+          2
+        )}'`
+      );
+    }
+  } else {
+    if (Object.values(DidMethodNetwork[method]).includes(networkFlag)) {
+      throw new Error(
+        `DID network flag ${networkFlag.toString(
+          2
+        )} is already registered for the another for '${method}'`
+      );
+    }
   }
   DidMethodNetwork[method][key] = networkFlag;
 };

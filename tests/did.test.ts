@@ -317,7 +317,7 @@ describe('DID tests', () => {
           method: DidMethod.Iden3,
           blockchain: Blockchain.ReadOnly,
           network: 'network',
-          networkFlag: 0b01000000 | 0b00000011,
+          networkFlag: 0b11000000 | 0b00000011,
           chainId: 104
         }
       },
@@ -436,7 +436,7 @@ describe('DID tests', () => {
         network: 'supa_net',
         networkFlag: 0b00010000 | 0b00000001
       },
-      err: 'DID network flag  undefined is already registered'
+      err: `DID network flag 10001 is already registered for the another for 'iden3'`
     }
   ];
   for (let i = 0; i < testCases.length; i++) {
