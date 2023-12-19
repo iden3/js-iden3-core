@@ -288,7 +288,7 @@ describe('DID tests', () => {
           network: 'network',
           networkFlag: 0b0001_0001,
           chainId: 102,
-          methodByte: 0b00000101
+          methodByte: 0b00000100
         }
       },
       {
@@ -308,7 +308,7 @@ describe('DID tests', () => {
           blockchain: Blockchain.ReadOnly,
           network: NetworkId.NoNetwork,
           networkFlag: 0b00000000,
-          chainId: 103
+          chainId: 104
         }
       },
       {
@@ -318,7 +318,7 @@ describe('DID tests', () => {
           blockchain: Blockchain.ReadOnly,
           network: 'network',
           networkFlag: 0b11000000 | 0b00000011,
-          chainId: 104
+          chainId: 105
         }
       },
       {
@@ -330,6 +330,15 @@ describe('DID tests', () => {
           networkFlag: 0b0001_0001,
           methodByte: 0b0000111
         }
+      },
+      {
+        description: 'register same did network flag',
+        data: {
+          method: 'iden3',
+          blockchain: Blockchain.ReadOnly,
+          network: NetworkId.NoNetwork,
+          networkFlag: 0b0000_0000
+        }
       }
     ];
 
@@ -340,15 +349,15 @@ describe('DID tests', () => {
 
     const d = helperBuildDIDFromType('method', 'chain', 'network');
     // const did = helperBuildDIDFromType('method', 'chain', 'network');
-    expect('5UtG9EXvF25j3X5uycwr4uy7Hjhni8bMposv3Lgv8o').toEqual(d.string().split(':').pop());
+    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(d.string().split(':').pop());
 
     // did
-    const didStr = 'did:method:chain:network:5UtG9EXvF25j3X5uycwr4uy7Hjhni8bMposv3Lgv8o';
+    const didStr = 'did:method:chain:network:4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT';
 
     const did3 = DID.parse(didStr);
     const id = DID.idFromDID(did3);
 
-    expect('5UtG9EXvF25j3X5uycwr4uy7Hjhni8bMposv3Lgv8o').toEqual(id.string());
+    expect('4bb86obLkMrifHixMY62WM4iQQVr7u29cxWjMAinrT').toEqual(id.string());
     const method = DID.methodFromId(id);
     expect(DidMethod.method).toBe(method);
     const blockchain = DID.blockchainFromId(id);
@@ -367,7 +376,7 @@ describe('DID tests', () => {
         networkFlag: 0b0001_0001,
         chainId: 1
       },
-      err: "chainId 'polygon:mumbai' already registered with value '80001'"
+      err: "can't register chainId 1 for 'polygon:mumbai' because it's already registered for another chain id"
     },
     {
       description: 'try to overwrite existing DID method byte',
@@ -389,9 +398,9 @@ describe('DID tests', () => {
         network: NetworkId.Main,
         networkFlag: 0b00100000 | 0b00000001,
         chainId: 1,
-        methodByte: 0b111111111
+        methodByte: 0b11111111
       },
-      err: "Can't register DID method byte: current '111111111', maximum byte allowed: '11111110'"
+      err: "Can't register DID method byte: current '11111111', maximum byte allowed: '11111110'"
     },
     {
       description: 'try to rewrite existing DID Method Network Flag',
@@ -401,7 +410,7 @@ describe('DID tests', () => {
         network: NetworkId.Main,
         networkFlag: 0b00100000 | 0b00000011
       },
-      err: "DID method network 'iden3' with blockchain 'eth' and network 'main' already registered with another flag '100001'"
+      err: "DID network flag 100011 is already registered for the another network id for 'iden3' method"
     },
     {
       description: 'register new did method with existing method byte',
@@ -416,7 +425,7 @@ describe('DID tests', () => {
       err: "DID method byte '1' already registered"
     },
     {
-      description: 'register new did method with existing method byte',
+      description: 'register new did method with existing chain id',
       data: {
         method: 'new_method',
         blockchain: Blockchain.Ethereum,
@@ -425,7 +434,7 @@ describe('DID tests', () => {
         chainId: 101,
         methodByte: 0b10000000
       },
-      err: "chainId 'eth:main' already registered with value '1'"
+      err: "can't register chainId 101 for 'eth:main' because it's already registered for another chain id"
     },
     {
       description:
@@ -436,7 +445,7 @@ describe('DID tests', () => {
         network: 'supa_net',
         networkFlag: 0b00010000 | 0b00000001
       },
-      err: `DID network flag 10001 is already registered for the another for 'iden3'`
+      err: `DID network flag 10001 is already registered for the another network id for 'iden3' method`
     }
   ];
   for (let i = 0; i < testCases.length; i++) {
