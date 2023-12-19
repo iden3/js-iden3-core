@@ -308,7 +308,7 @@ describe('DID tests', () => {
           blockchain: Blockchain.ReadOnly,
           network: NetworkId.NoNetwork,
           networkFlag: 0b00000000,
-          chainId: 103
+          chainId: 104
         }
       },
       {
@@ -317,8 +317,8 @@ describe('DID tests', () => {
           method: DidMethod.Iden3,
           blockchain: Blockchain.ReadOnly,
           network: 'network',
-          networkFlag: 0b01000000 | 0b00000011,
-          chainId: 104
+          networkFlag: 0b11000000 | 0b00000011,
+          chainId: 105
         }
       },
       {
@@ -328,7 +328,16 @@ describe('DID tests', () => {
           blockchain: Blockchain.Polygon,
           network: NetworkId.Mumbai,
           networkFlag: 0b0001_0001,
-          methodByte: 0b0000001
+          methodByte: 0b0000111
+        }
+      },
+      {
+        description: 'register same did network flag',
+        data: {
+          method: 'iden3',
+          blockchain: Blockchain.ReadOnly,
+          network: NetworkId.NoNetwork,
+          networkFlag: 0b0000_0000
         }
       }
     ];
@@ -367,7 +376,7 @@ describe('DID tests', () => {
         networkFlag: 0b0001_0001,
         chainId: 1
       },
-      err: "chainId 'polygon:mumbai' already registered with value '80001'"
+      err: "can't register chainId 1 for 'polygon:mumbai' because it's already registered for another chain id"
     },
     {
       description: 'try to overwrite existing DID method byte',
@@ -379,7 +388,7 @@ describe('DID tests', () => {
         chainId: 1,
         methodByte: 0b00000010
       },
-      err: "DID method 'iden3' already registered with byte '1'"
+      err: "can't register method 'iden3' because DID method byte '10' already registered"
     },
     {
       description: 'try to write max did method byte',
@@ -401,7 +410,42 @@ describe('DID tests', () => {
         network: NetworkId.Main,
         networkFlag: 0b00100000 | 0b00000011
       },
-      err: "DID method network 'iden3' with blockchain 'eth' and network 'main' already registered with another flag '100001'"
+      err: "DID network flag 100011 is already registered for the another network id for 'iden3' method"
+    },
+    {
+      description: 'register new did method with existing method byte',
+      data: {
+        method: 'new_method',
+        blockchain: 'new_chain',
+        network: 'new_net',
+        networkFlag: 0b0001_0001,
+        chainId: 101,
+        methodByte: 0b00000001
+      },
+      err: "DID method byte '1' already registered"
+    },
+    {
+      description: 'register new did method with existing chain id',
+      data: {
+        method: 'new_method',
+        blockchain: Blockchain.Ethereum,
+        network: NetworkId.Main,
+        networkFlag: 0b0001_0001,
+        chainId: 101,
+        methodByte: 0b10000000
+      },
+      err: "can't register chainId 101 for 'eth:main' because it's already registered for another chain id"
+    },
+    {
+      description:
+        'register new network and chain with existing networkFlag for existing existing did method',
+      data: {
+        method: DidMethod.Iden3,
+        blockchain: 'supa_chain',
+        network: 'supa_net',
+        networkFlag: 0b00010000 | 0b00000001
+      },
+      err: `DID network flag 10001 is already registered for the another network id for 'iden3' method`
     }
   ];
   for (let i = 0; i < testCases.length; i++) {

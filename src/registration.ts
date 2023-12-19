@@ -17,12 +17,6 @@ export const registerNetwork = (network: string): void => {
 };
 
 export const registerDidMethod = (method: string, byte: number): void => {
-  const existingByte = DidMethodByte[method];
-  if (typeof DidMethodByte[method] === 'number' && existingByte !== byte) {
-    throw new Error(
-      `DID method '${method}' already registered with byte '${existingByte.toString(2)}'`
-    );
-  }
   const max = DidMethodByte[DidMethod.Other];
 
   if (byte >= max) {
@@ -30,6 +24,18 @@ export const registerDidMethod = (method: string, byte: number): void => {
       `Can't register DID method byte: current '${byte.toString(2)}', maximum byte allowed: '${(
         max - 1
       ).toString(2)}'`
+    );
+  }
+
+  if (typeof DidMethodByte[method] === 'number' && DidMethodByte[method] === byte) {
+    return;
+  }
+
+  if (Object.values(DidMethodByte).includes(byte)) {
+    throw new Error(
+      `can't register method '${method}' because DID method byte '${byte.toString(
+        2
+      )}' already registered for another method`
     );
   }
 
@@ -48,9 +54,13 @@ export const registerDidMethod = (method: string, byte: number): void => {
 export const registerChainId = (blockchain: string, network: string, chainId: number): void => {
   const key = `${blockchain}:${network}`;
 
-  if (typeof ChainIds[key] === 'number' && ChainIds[key] !== chainId) {
+  if (typeof ChainIds[key] === 'number' && ChainIds[key] === chainId) {
+    return;
+  }
+
+  if (Object.values(ChainIds).includes(chainId)) {
     throw new Error(
-      `chainId '${blockchain}:${network}' already registered with value '${ChainIds[key]}'`
+      `can't register chainId ${chainId} for '${blockchain}:${network}' because it's already registered for another chain id`
     );
   }
 
@@ -145,13 +155,19 @@ export const registerDidMethodNetwork = ({
   }
 
   const key = `${blockchain}:${network}`;
+
   const existedFlag = DidMethodNetwork[method][key];
-  if (typeof existedFlag === 'number' && existedFlag !== networkFlag) {
+  if (typeof existedFlag === 'number' && existedFlag === networkFlag) {
+    return;
+  }
+
+  if (Object.values(DidMethodNetwork[method]).includes(networkFlag)) {
     throw new Error(
-      `DID method network '${method}' with blockchain '${blockchain}' and network '${network}' already registered with another flag '${existedFlag.toString(
+      `DID network flag ${networkFlag.toString(
         2
-      )}'`
+      )} is already registered for the another network id for '${method}' method`
     );
   }
+
   DidMethodNetwork[method][key] = networkFlag;
 };
