@@ -13,7 +13,8 @@
         "require": "./dist/node/cjs/index.js"
       },
       "browser": "./dist/browser/esm/index.js",
-      "umd": "./dist/browser/umd/index.js"
+      "umd": "./dist/browser/umd/index.js",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "files": [
