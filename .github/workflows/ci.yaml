@@ -4,7 +4,7 @@ jobs:
   build:
     strategy:
       matrix:
-        version: [16.15, 18]
+        version: ['lts/*']
     timeout-minutes: 7
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +32,7 @@ jobs:
         continue-on-error: true
         run: npm list
       - name: Install modules
-        run: npm install
+        run: npm ci
 
       - name: Run Prettier
         run: npm run format
