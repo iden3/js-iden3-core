@@ -135,7 +135,7 @@ describe('DID tests', () => {
         wantDID: 'did:polygonid:zkevm:test:2wcMpvr8NgWTfqN6ChaFEx1qRnLREXhjeoJ45pFyw5'
       },
       {
-        title: 'Polygon | zkEVM chain, test',
+        title: 'Polygon chain, Amoy',
         method: DidMethod.PolygonId,
         chain: Blockchain.Polygon,
         net: NetworkId.Amoy,

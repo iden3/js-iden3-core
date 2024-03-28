@@ -31,7 +31,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint --fix --ext .ts src/** tests/**",
-    "format": "prettier --config .prettierrc './**/*.ts' --write"
+    "format": "prettier --config .prettierrc './**/*.ts' --write",
+    "format:check": "prettier --config .prettierrc './**/*.ts' --check"
   },
   "release": {
     "branches": [
