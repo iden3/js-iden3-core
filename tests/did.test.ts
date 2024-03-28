@@ -133,6 +133,13 @@ describe('DID tests', () => {
         chain: Blockchain.ZkEVM,
         net: NetworkId.Test,
         wantDID: 'did:polygonid:zkevm:test:2wcMpvr8NgWTfqN6ChaFEx1qRnLREXhjeoJ45pFyw5'
+      },
+      {
+        title: 'Polygon | zkEVM chain, test',
+        method: DidMethod.PolygonId,
+        chain: Blockchain.Polygon,
+        net: NetworkId.Amoy,
+        wantDID: 'did:polygonid:polygon:amoy:2qQ68JkRcf3xrHPQPWZei3YeVzHPP58wYNxx2mEouR'
       }
     ];
 
@@ -149,6 +156,9 @@ describe('DID tests', () => {
         const networkID = DID.networkIdFromId(id);
         expect(tc.net).toEqual(networkID);
         expect(tc.wantDID).toEqual(did.string());
+        expect(DID.idFromDID(DID.parse(tc.wantDID)).string()).toEqual(
+          did.string().split(':').pop()
+        );
       });
     }
   });
