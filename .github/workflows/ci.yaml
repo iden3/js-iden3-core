@@ -38,7 +38,7 @@ jobs:
         run: npm run format:check
 
       - name: Run ESLint
-        run: npm run lint
+        run: npm run lint:check
 
       - name: Run Tests
         run: npm run test
