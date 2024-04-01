@@ -54,6 +54,7 @@ export const Blockchain: { [k: string]: string } = {
 export const NetworkId: { [k: string]: string } = {
   Main: 'main',
   Mumbai: 'mumbai',
+  Amoy: 'amoy',
   Goerli: 'goerli',
   Sepolia: 'sepolia',
   Test: 'test',
@@ -77,6 +78,7 @@ export const ChainIds: { [key: string]: number } = {
   [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 11155111,
   [`${Blockchain.Polygon}:${NetworkId.Main}`]: 137,
   [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 80001,
+  [`${Blockchain.Polygon}:${NetworkId.Amoy}`]: 80002,
   [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 1101,
   [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442
 };
@@ -87,31 +89,29 @@ export const DidMethodByte: { [key: string]: number } = {
   [DidMethod.Other]: 0b11111111
 };
 
+const blockchainNetworkMap = {
+  [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
+  [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b0001_0000 | 0b0000_0001,
+  [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b0001_0000 | 0b0000_0010,
+  [`${Blockchain.Polygon}:${NetworkId.Amoy}`]: 0b0001_0000 | 0b0000_0011,
+  [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b0010_0000 | 0b0000_0001,
+  [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b0010_0000 | 0b0000_0010,
+  [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b0010_0000 | 0b0000_0011,
+  [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b0011_0000 | 0b0000_0001,
+  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b0011_0000 | 0b0000_0010
+};
+
 // DIDMethodNetwork is map for did methods and their blockchain networks
 export const DidMethodNetwork: {
   [k: string]: { [k: string]: number };
 } = {
   [DidMethod.Iden3]: {
-    [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
-    [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
-    [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b00010000 | 0b00000010,
-    [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b00100000 | 0b00000001,
-    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010,
-    [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b00100000 | 0b00000011,
-    [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b00110000 | 0b00000001,
-    [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b00110000 | 0b00000010
+    ...blockchainNetworkMap
   },
   [DidMethod.PolygonId]: {
-    [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
-    [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b00010000 | 0b00000001,
-    [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b00010000 | 0b00000010,
-    [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b00100000 | 0b00000001,
-    [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b00100000 | 0b00000010,
-    [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b00100000 | 0b00000011,
-    [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b00110000 | 0b00000001,
-    [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b00110000 | 0b00000010
+    ...blockchainNetworkMap
   },
   [DidMethod.Other]: {
-    [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b11111111
+    [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b1111_1111
   }
 };
