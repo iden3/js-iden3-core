@@ -91,6 +91,10 @@ export class DID {
     return buff.join('');
   }
 
+  toJSON() {
+    return this.string();
+  }
+
   static parse(s: string): DID {
     const parser = new Parser(s);
 

@@ -97,6 +97,18 @@ describe('DID tests', () => {
     expect('did:iden3:readonly:tJ93RwaVfE1PEMxd5rpZZuPtLCwbEaDCrNBhAy8HM').toBe(did2.string());
   });
 
+  it('Test DID to JSON', () => {
+    const didStr = 'did:polygonid:linea:sepolia:32232vGknSaJHfCBffnbzHzYYy6FvHDkK9QL4SFAq6';
+    const did = DID.parse(didStr);
+    const field1Val = 'field1';
+    const objWithDid = {
+      field1: field1Val,
+      did
+    };
+    const stringify = JSON.stringify(objWithDid);
+    expect(stringify).toBe(`{"field1":"${field1Val}","did":"${didStr}"}`);
+  });
+
   describe('TestDID_PolygonID_Types', () => {
     const testCases = [
       {
