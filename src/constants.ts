@@ -46,6 +46,7 @@ export const Blockchain: { [k: string]: string } = {
   Ethereum: 'eth',
   Polygon: 'polygon',
   ZkEVM: 'zkevm',
+  Privado: 'privado',
   Unknown: 'unknown',
   NoChain: '',
   ReadOnly: 'readonly'
@@ -80,7 +81,9 @@ export const ChainIds: { [key: string]: number } = {
   [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 80001,
   [`${Blockchain.Polygon}:${NetworkId.Amoy}`]: 80002,
   [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 1101,
-  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442
+  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442,
+  [`${Blockchain.Privado}:${NetworkId.Main}`]: 21000,
+  [`${Blockchain.Privado}:${NetworkId.Test}`]: 21001
 };
 
 export const DidMethodByte: { [key: string]: number } = {
@@ -98,7 +101,9 @@ const blockchainNetworkMap = {
   [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b0010_0000 | 0b0000_0010,
   [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b0010_0000 | 0b0000_0011,
   [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b0011_0000 | 0b0000_0001,
-  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b0011_0000 | 0b0000_0010
+  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b0011_0000 | 0b0000_0010,
+  [`${Blockchain.Privado}:${NetworkId.Main}`]: 0b1010_0000 | 0b0000_0001,
+  [`${Blockchain.Privado}:${NetworkId.Test}`]: 0b1010_0000 | 0b0000_0010
 };
 
 // DIDMethodNetwork is map for did methods and their blockchain networks

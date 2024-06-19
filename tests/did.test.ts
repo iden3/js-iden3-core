@@ -109,7 +109,7 @@ describe('DID tests', () => {
     expect(stringify).toBe(`{"field1":"${field1Val}","did":"${didStr}"}`);
   });
 
-  describe('TestDID_PolygonID_Types', () => {
+  describe('Test DID build from types', () => {
     const testCases = [
       {
         title: 'Polygon no chain, no network',
@@ -152,6 +152,20 @@ describe('DID tests', () => {
         chain: Blockchain.Polygon,
         net: NetworkId.Amoy,
         wantDID: 'did:polygonid:polygon:amoy:2qQ68JkRcf3xrHPQPWZei3YeVzHPP58wYNxx2mEouR'
+      },
+      {
+        title: 'Privado chain, Main',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Privado,
+        net: NetworkId.Main,
+        wantDID: 'did:iden3:privado:main:2SZDsdYordSGMMQVXTVbCb7W834NBTBpkKZUAFRoGb'
+      },
+      {
+        title: 'Privado chain, Test',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Privado,
+        net: NetworkId.Test,
+        wantDID: 'did:iden3:privado:test:2Skqvp4vnSFtq5bgAXbDs1Fs4AA5QGpRut9mCDew5R'
       }
     ];
 
