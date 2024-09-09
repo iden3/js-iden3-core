@@ -412,7 +412,7 @@ describe('claim test', () => {
   describe('merklization', () => {
     const tests = [
       {
-        name: 'not merklizedd',
+        name: 'not merklized',
         claim: () => Claim.newClaim(new SchemaHash()),
         expectedPosition: MerklizedRootPosition.None
       },
