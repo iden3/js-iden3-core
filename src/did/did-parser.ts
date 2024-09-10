@@ -135,7 +135,7 @@ export class Parser {
       // from the grammar:
       //   idstring = 1*idchar
       // return error because idstring is empty, ex- did:a::123:456
-      throw new Error(`idstring must be atleast one char long, ${currentIndex}`);
+      throw new Error(`idstring must be at least one char long, ${currentIndex}`);
     }
 
     // set parser state
@@ -298,7 +298,7 @@ export class Parser {
         percentEncoded = true;
         indexIncrement = 3;
       } else {
-        // not pecent encoded
+        // not percent encoded
         percentEncoded = false;
         indexIncrement = 1;
       }
@@ -313,7 +313,7 @@ export class Parser {
     }
 
     if (currentIndex == startIndex && this.out.pathSegments.length === 0) {
-      throw new Error(`first path segment must have atleast one character, ${currentIndex}`);
+      throw new Error(`first path segment must have at least one character, ${currentIndex}`);
     }
 
     // update parser state
@@ -359,7 +359,7 @@ export class Parser {
         percentEncoded = true;
         indexIncrement = 3;
       } else {
-        // not pecent encoded
+        // not percent encoded
         percentEncoded = false;
         indexIncrement = 1;
       }
@@ -407,7 +407,7 @@ export class Parser {
         percentEncoded = true;
         indexIncrement = 3;
       } else {
-        // not pecent encoded
+        // not percent encoded
         percentEncoded = false;
         indexIncrement = 1;
       }

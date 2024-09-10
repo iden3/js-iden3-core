@@ -22,7 +22,7 @@ describe('DID parser', () => {
       expect(true).toBe(d.isUrl());
     });
 
-    it('returns true if PathSegements', () => {
+    it('returns true if PathSegments', () => {
       const d = new DID({ method: 'example', id: '123', pathSegments: ['a', 'b'] });
       expect(true).toBe(d.isUrl());
     });
@@ -123,7 +123,7 @@ describe('DID parser', () => {
       expect('did:example:123/a/b').toBe(d.string());
     });
 
-    it('includes Path assembled from PathSegements', () => {
+    it('includes Path assembled from PathSegments', () => {
       const d = new DID({ method: 'example', id: '123', pathSegments: ['a', 'b'] });
       expect('did:example:123/a/b').toBe(d.string());
     });
@@ -201,7 +201,7 @@ describe('DID parser', () => {
       expect(() => DID.parse('did:a:')).toThrow();
     });
 
-    it('returns error if input does not have a seconconst d  to mark end of method', () => {
+    it('returns error if input does not have a second const d to mark end of method', () => {
       expect(() => DID.parse('did:aaaaaaaaaaa')).toThrow();
     });
 
@@ -209,7 +209,7 @@ describe('DID parser', () => {
       expect(() => DID.parse('did::aaaaaaaaaaa')).toThrow();
     });
 
-    it('returns error if idstring is empty', () => {
+    it('returns error if id string is empty', () => {
       const dids = [
         'did:a::123:456',
         'did:a:123::456',
@@ -416,7 +416,7 @@ describe('DID parser', () => {
       expect('someService').toBe(d.path);
     });
 
-    it('succeeds to extract path segements', () => {
+    it('succeeds to extract path segments', () => {
       const d = DID.parse('did:a:123:456/a/b');
 
       const segments = d.pathSegments;
@@ -459,11 +459,11 @@ describe('DID parser', () => {
       expect(() => DID.parse('did:a:123:456/ssss^sss')).toThrow();
     });
 
-    it('does not fail if path has atleast one segment and a trailing slash', () => {
+    it('does not fail if path has at least one segment and a trailing slash', () => {
       expect(() => DID.parse('did:a:123:456/a/b/')).not.toThrow();
     });
 
-    it('succeeds to extract query after idstring', () => {
+    it('succeeds to extract query after id string', () => {
       const d = DID.parse('did:a:123?abc');
       expect('a').toBe(d.method);
       expect('123').toBe(d.id);
