@@ -166,6 +166,20 @@ describe('DID tests', () => {
         chain: Blockchain.Privado,
         net: NetworkId.Test,
         wantDID: 'did:iden3:privado:test:2Skqvp4vnSFtq5bgAXbDs1Fs4AA5QGpRut9mCDew5R'
+      },
+      {
+        title: 'Linea chain, Main',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Linea,
+        net: NetworkId.Main,
+        wantDID: 'did:iden3:linea:main:28vX3frJDbAvHLSMHEwxuxRk1GPpjBeUEsXdAwVxDm'
+      },
+      {
+        title: 'Linea chain, Test',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Linea,
+        net: NetworkId.Sepolia,
+        wantDID: 'did:iden3:linea:sepolia:28itzVLBHnMHocFAeArLFYHP59J7WN1s5JwL8yGpQw'
       }
     ];
 
