@@ -137,14 +137,14 @@ describe('DID tests', () => {
         method: DidMethod.PolygonId,
         chain: Blockchain.Polygon,
         net: NetworkId.Zkevm,
-        wantDID: 'did:polygonid:polygon:zkevm:2wQjmkL1SsgqC7AuZdUcaXsUVfEi1i58VEhm3r2r8F'
+        wantDID: 'did:polygonid:polygon:zkevm:2qbiBVGYYTsbL1ab2afHNTh1S7P6btmYhwZF4jTwiF'
       },
       {
         title: 'Polygon | zkEVM chain, test',
         method: DidMethod.PolygonId,
         chain: Blockchain.Polygon,
         net: NetworkId.Cardona,
-        wantDID: 'did:polygonid:polygon:cardona:2wcMpvr8NgWTfqN6ChaFEx1qRnLREXhjeoJ45pFyw5'
+        wantDID: 'did:polygonid:polygon:cardona:2qoLEfnfUGhDojmmfekv2sqNNEUopiQ9sW9Y6hh5X5'
       },
       {
         title: 'Polygon chain, Amoy',
