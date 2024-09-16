@@ -58,6 +58,8 @@ export const NetworkId: { [k: string]: string } = {
   Amoy: 'amoy',
   Goerli: 'goerli',
   Sepolia: 'sepolia',
+  Zkevm: 'zkevm',
+  Cardona: 'cardona',
   Test: 'test',
   Unknown: 'unknown',
   NoNetwork: ''
