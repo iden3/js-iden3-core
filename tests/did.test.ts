@@ -135,16 +135,16 @@ describe('DID tests', () => {
       {
         title: 'Polygon | zkEVM chain, main',
         method: DidMethod.PolygonId,
-        chain: Blockchain.ZkEVM,
-        net: NetworkId.Main,
-        wantDID: 'did:polygonid:zkevm:main:2wQjmkL1SsgqC7AuZdUcaXsUVfEi1i58VEhm3r2r8F'
+        chain: Blockchain.Polygon,
+        net: NetworkId.Zkevm,
+        wantDID: 'did:polygonid:polygon:zkevm:2qbiBVGYYTsbL1ab2afHNTh1S7P6btmYhwZF4jTwiF'
       },
       {
         title: 'Polygon | zkEVM chain, test',
         method: DidMethod.PolygonId,
-        chain: Blockchain.ZkEVM,
-        net: NetworkId.Test,
-        wantDID: 'did:polygonid:zkevm:test:2wcMpvr8NgWTfqN6ChaFEx1qRnLREXhjeoJ45pFyw5'
+        chain: Blockchain.Polygon,
+        net: NetworkId.Cardona,
+        wantDID: 'did:polygonid:polygon:cardona:2qoLEfnfUGhDojmmfekv2sqNNEUopiQ9sW9Y6hh5X5'
       },
       {
         title: 'Polygon chain, Amoy',
@@ -166,6 +166,20 @@ describe('DID tests', () => {
         chain: Blockchain.Privado,
         net: NetworkId.Test,
         wantDID: 'did:iden3:privado:test:2Skqvp4vnSFtq5bgAXbDs1Fs4AA5QGpRut9mCDew5R'
+      },
+      {
+        title: 'Linea chain, Main',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Linea,
+        net: NetworkId.Main,
+        wantDID: 'did:iden3:linea:main:28vX3frJDbAvHLSMHEwxuxRk1GPpjBeUEsXdAwVxDm'
+      },
+      {
+        title: 'Linea chain, Test',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Linea,
+        net: NetworkId.Sepolia,
+        wantDID: 'did:iden3:linea:sepolia:28itzVLBHnMHocFAeArLFYHP59J7WN1s5JwL8yGpQw'
       }
     ];
 
