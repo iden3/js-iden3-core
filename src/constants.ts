@@ -45,8 +45,8 @@ export const Constants = Object.freeze({
 export const Blockchain: { [k: string]: string } = {
   Ethereum: 'eth',
   Polygon: 'polygon',
-  ZkEVM: 'zkevm',
   Privado: 'privado',
+  Linea: 'linea',
   Unknown: 'unknown',
   NoChain: '',
   ReadOnly: 'readonly'
@@ -80,10 +80,12 @@ export const ChainIds: { [key: string]: number } = {
   [`${Blockchain.Polygon}:${NetworkId.Main}`]: 137,
   [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 80001,
   [`${Blockchain.Polygon}:${NetworkId.Amoy}`]: 80002,
-  [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 1101,
-  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442,
+  [`${Blockchain.Polygon}:${NetworkId.Zkevm}`]: 1101,
+  [`${Blockchain.Polygon}:${NetworkId.Cardona}`]: 2442,
   [`${Blockchain.Privado}:${NetworkId.Main}`]: 21000,
-  [`${Blockchain.Privado}:${NetworkId.Test}`]: 21001
+  [`${Blockchain.Privado}:${NetworkId.Test}`]: 21001,
+  [`${Blockchain.Linea}:${NetworkId.Main}`]: 59144,
+  [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 59141
 };
 
 export const DidMethodByte: { [key: string]: number } = {
@@ -97,13 +99,16 @@ const blockchainNetworkMap = {
   [`${Blockchain.Polygon}:${NetworkId.Main}`]: 0b0001_0000 | 0b0000_0001,
   [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 0b0001_0000 | 0b0000_0010,
   [`${Blockchain.Polygon}:${NetworkId.Amoy}`]: 0b0001_0000 | 0b0000_0011,
+  [`${Blockchain.Polygon}:${NetworkId.Zkevm}`]: 0b0011_0000 | 0b0000_0001,
+  [`${Blockchain.Polygon}:${NetworkId.Cardona}`]: 0b0011_0000 | 0b0000_0010,
   [`${Blockchain.Ethereum}:${NetworkId.Main}`]: 0b0010_0000 | 0b0000_0001,
   [`${Blockchain.Ethereum}:${NetworkId.Goerli}`]: 0b0010_0000 | 0b0000_0010,
   [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b0010_0000 | 0b0000_0011,
-  [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b0011_0000 | 0b0000_0001,
-  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b0011_0000 | 0b0000_0010,
   [`${Blockchain.Privado}:${NetworkId.Main}`]: 0b1010_0000 | 0b0000_0001,
-  [`${Blockchain.Privado}:${NetworkId.Test}`]: 0b1010_0000 | 0b0000_0010
+  [`${Blockchain.Privado}:${NetworkId.Test}`]: 0b1010_0000 | 0b0000_0010,
+  [`${Blockchain.Linea}:${NetworkId.Main}`]: 0b0100_0000 | 0b0000_1001,
+  [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 0b0100_0000 | 0b0000_1000
+
 };
 
 // DIDMethodNetwork is map for did methods and their blockchain networks
