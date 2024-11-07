@@ -526,6 +526,17 @@ export class Claim {
     return this;
   }
 
+  fromBigInts(raw: bigint[]): Claim {
+    if (raw.length !== this._index.length + this._value.length) {
+      throw new Error("invalid number of claim's slots");
+    }
+    for (let i = 0; i < 4; i++) {
+      this._index[i].setBigInt(raw[i]);
+      this._value[i].setBigInt(raw[i + 4]);
+    }
+    return this;
+  }
+
   unMarshalBinary(data: Uint8Array): void {
     const wantLen = 2 * Constants.ELEM_BYTES_LENGTH * Constants.BYTES_LENGTH;
     if (data.length !== wantLen) {

@@ -551,6 +551,25 @@ describe('claim test', () => {
     });
   });
 
+  describe('from constructors', () => {
+    it('fromBigInts', () => {
+      // this test was synthesized with golang test
+      const ints = [
+        BigInt("3537648966163034177119037898189471968122"),
+        BigInt("25999649578069426716666405683037372395789852830344252783677755850030715394"),
+        BigInt("657065114158124047812701241180089030040156354062"),
+        BigInt("1995762661"),
+        BigInt("58718019808110235945021734914"),
+        BigInt("0"),
+        BigInt("0"),
+        BigInt("0"),
+      ]
+      const c = (new Claim).fromBigInts(ints);
+      const userId = c.getId();
+      expect(userId.string()).toEqual("2qNkLwz97jdzZBkdJYwVdXyGARGfVSGLJxELVC9ceH");
+    });
+  });
+
   it('set index ID value', () => {
     const id = Id.fromString('ww9xPmW6U3k6XatpaPPWbqPgUqW2Ct6AhsGNuYGm2');
     const claim = new Claim();
