@@ -22,7 +22,8 @@ module.exports = {
             'serv',
             'pchar',
             'idstring',
-            'idchar'
+            'idchar',
+            'Cardona'
           ]
         }
       }
