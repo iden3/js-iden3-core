@@ -46,6 +46,7 @@ export const Blockchain: { [k: string]: string } = {
   Ethereum: 'eth',
   Polygon: 'polygon',
   Privado: 'privado',
+  Billions: 'billions',
   Linea: 'linea',
   Unknown: 'unknown',
   NoChain: '',
@@ -87,7 +88,9 @@ export const ChainIds: { [key: string]: number } = {
   [`${Blockchain.Privado}:${NetworkId.Main}`]: 21000,
   [`${Blockchain.Privado}:${NetworkId.Test}`]: 21001,
   [`${Blockchain.Linea}:${NetworkId.Main}`]: 59144,
-  [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 59141
+  [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 59141,
+  [`${Blockchain.Billions}:${NetworkId.Main}`]: 6912,
+  [`${Blockchain.Billions}:${NetworkId.Test}`]: 6913,
 };
 
 export const DidMethodByte: { [key: string]: number } = {
@@ -109,7 +112,9 @@ const blockchainNetworkMap = {
   [`${Blockchain.Privado}:${NetworkId.Main}`]: 0b1010_0000 | 0b0000_0001,
   [`${Blockchain.Privado}:${NetworkId.Test}`]: 0b1010_0000 | 0b0000_0010,
   [`${Blockchain.Linea}:${NetworkId.Main}`]: 0b0100_0000 | 0b0000_1001,
-  [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 0b0100_0000 | 0b0000_1000
+  [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 0b0100_0000 | 0b0000_1000,
+  [`${Blockchain.Billions}:${NetworkId.Main}`]: 0b1011_0000 | 0b0000_0001,
+  [`${Blockchain.Billions}:${NetworkId.Test}`]: 0b1011_0000 | 0b0000_0010
 };
 
 // DIDMethodNetwork is map for did methods and their blockchain networks
