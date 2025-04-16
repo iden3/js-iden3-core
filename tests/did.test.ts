@@ -206,7 +206,6 @@ describe('DID tests', () => {
         const method = DID.methodFromId(id);
         expect(tc.method).toEqual(method);
         const blockchain = DID.blockchainFromId(id);
-        console.log('blockchain', blockchain);
         expect(tc.chain).toEqual(blockchain);
         const networkID = DID.networkIdFromId(id);
         expect(tc.net).toEqual(networkID);
