@@ -90,7 +90,7 @@ export const ChainIds: { [key: string]: number } = {
   [`${Blockchain.Linea}:${NetworkId.Main}`]: 59144,
   [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 59141,
   [`${Blockchain.Billions}:${NetworkId.Main}`]: 6912,
-  [`${Blockchain.Billions}:${NetworkId.Test}`]: 6913,
+  [`${Blockchain.Billions}:${NetworkId.Test}`]: 6913
 };
 
 export const DidMethodByte: { [key: string]: number } = {
