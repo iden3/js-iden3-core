@@ -89,7 +89,7 @@ export const ChainIds: { [key: string]: number } = {
   [`${Blockchain.Privado}:${NetworkId.Test}`]: 21001,
   [`${Blockchain.Linea}:${NetworkId.Main}`]: 59144,
   [`${Blockchain.Linea}:${NetworkId.Sepolia}`]: 59141,
-  [`${Blockchain.Billions}:${NetworkId.Main}`]: 6912,
+  [`${Blockchain.Billions}:${NetworkId.Main}`]: 45056,
   [`${Blockchain.Billions}:${NetworkId.Test}`]: 6913
 };
 
