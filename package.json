@@ -1,6 +1,6 @@
 {
   "name": "@iden3/js-iden3-core",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Low level API to create and manipulate iden3 Claims.",
   "source": "./src/index.ts",
   "types": "dist/types/index.d.ts",
