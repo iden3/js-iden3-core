@@ -168,6 +168,20 @@ describe('DID tests', () => {
         wantDID: 'did:iden3:privado:test:2Skqvp4vnSFtq5bgAXbDs1Fs4AA5QGpRut9mCDew5R'
       },
       {
+        title: 'Billions chain, Main',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Billions,
+        net: NetworkId.Main,
+        wantDID: 'did:iden3:billions:main:2VmAkXrihYaKzzVRkb3hoFRH3zdjibHXPK2Ahm3xBq'
+      },
+      {
+        title: 'Billions chain, Test',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Billions,
+        net: NetworkId.Test,
+        wantDID: 'did:iden3:billions:test:2VxnoiNqdMPxUigcPf9LTfZdz7jSwQv8YscTjjH5zf'
+      },
+      {
         title: 'Linea chain, Main',
         method: DidMethod.Iden3,
         chain: Blockchain.Linea,
