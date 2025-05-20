@@ -1,15 +1,16 @@
-const iden3Config = require('@iden3/eslint-config');
-const { spellcheckerRule, cspellConfig } = require('@iden3/eslint-config/cspell');
+import * as cspell from '@iden3/eslint-config/cspell.js';
 
-module.exports = {
+import iden3Config from '@iden3/eslint-config';
+
+export default {
   ...iden3Config,
   rules: {
     '@cspell/spellchecker': [
       1,
       {
-        ...spellcheckerRule,
+        ...cspell.spellcheckerRule,
         cspell: {
-          ...cspellConfig,
+          ...cspell.cspellConfig,
           ignoreWords: [
             'idid',
             'subdelim',
