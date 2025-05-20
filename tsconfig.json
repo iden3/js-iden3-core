@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
-    "target": "es2020",
-    "module": "ES2020",
-    "lib": ["es2020", "dom"],
-    "allowJs": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022"],
     "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true,
+    "sourceMap": true,
+    "declarationMap": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "outDir": "dist/node/esm",
     "typeRoots": ["node_modules/@types"]
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src", "types"]
 }
