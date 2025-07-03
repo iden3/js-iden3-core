@@ -194,6 +194,20 @@ describe('DID tests', () => {
         chain: Blockchain.Linea,
         net: NetworkId.Sepolia,
         wantDID: 'did:iden3:linea:sepolia:28itzVLBHnMHocFAeArLFYHP59J7WN1s5JwL8yGpQw'
+      },
+      {
+        title: 'Receptor | Redbelly, mainnet',
+        method: DidMethod.Receptor,
+        chain: Blockchain.Redbelly,
+        net: NetworkId.Mainnet,
+        wantDID: 'did:receptor:redbelly:mainnet:31A9FG7T3SZpaoU7b77yRBXt682Y8Z6vK7PHhgrUAAB'
+      },
+      {
+        title: 'Receptor | Redbelly, testnet',
+        method: DidMethod.Receptor,
+        chain: Blockchain.Redbelly,
+        net: NetworkId.Testnet,
+        wantDID: 'did:receptor:redbelly:testnet:31Jxbg6JJG5xFqUbfEEFEKrDyBQsQHEgzN7JdBWRkCg'
       }
     ];
 
