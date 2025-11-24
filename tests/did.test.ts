@@ -194,7 +194,35 @@ describe('DID tests', () => {
         chain: Blockchain.Linea,
         net: NetworkId.Sepolia,
         wantDID: 'did:iden3:linea:sepolia:28itzVLBHnMHocFAeArLFYHP59J7WN1s5JwL8yGpQw'
-      }
+      },
+      {
+        title: 'Base chain, Main',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Base,
+        net: NetworkId.Main,
+        wantDID: 'did:iden3:base:main:2AXVV81Fe3jx79ypPoj2DHadUFBWVkhKZNFyShK2gP'
+      },
+      {
+        title: 'Base chain, Test',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Base,
+        net: NetworkId.Sepolia,
+        wantDID: 'did:iden3:base:sepolia:2Aj7YJXNZrZaatB12speshizQNHDiaKvivrGUfYAVD'
+      },
+      {
+        title: 'Bnb chain, Main',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Bnb,
+        net: NetworkId.Main,
+        wantDID: 'did:iden3:bnb:main:2DjSN2KAUxt1ko4kcwH8owtQQCkt2to2CMifzCwBbd'
+      },
+      {
+        title: 'Bnb chain, Test',
+        method: DidMethod.Iden3,
+        chain: Blockchain.Bnb,
+        net: NetworkId.Test,
+        wantDID: 'did:iden3:bnb:test:2Dw4RCqHQmheEXFwG1NmUN2mLKrbFiRdMvJy2BAKQT'
+      },      
     ];
 
     for (let i = 0; i < testCases.length; i++) {
