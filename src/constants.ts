@@ -124,7 +124,7 @@ const blockchainNetworkMap = {
   [`${Blockchain.Base}:${NetworkId.Main}`]: 0b0101_0000 | 0b0000_0001,
   [`${Blockchain.Base}:${NetworkId.Sepolia}`]: 0b0101_0000 | 0b0000_0010,
   [`${Blockchain.Bnb}:${NetworkId.Main}`]: 0b0110_0000 | 0b0000_0001,
-  [`${Blockchain.Bnb}:${NetworkId.Test}`]: 0b0110_0000 | 0b0000_0010,
+  [`${Blockchain.Bnb}:${NetworkId.Test}`]: 0b0110_0000 | 0b0000_0010
 };
 
 // DIDMethodNetwork is map for did methods and their blockchain networks

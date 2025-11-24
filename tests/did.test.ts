@@ -222,7 +222,7 @@ describe('DID tests', () => {
         chain: Blockchain.Bnb,
         net: NetworkId.Test,
         wantDID: 'did:iden3:bnb:test:2Dw4RCqHQmheEXFwG1NmUN2mLKrbFiRdMvJy2BAKQT'
-      },      
+      }
     ];
 
     for (let i = 0; i < testCases.length; i++) {
