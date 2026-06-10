@@ -3,6 +3,6 @@ export * from './constants';
 export * from './did';
 export * from './elemBytes';
 export * from './id';
+export * from './registration';
 export * from './schemaHash';
 export * from './utils';
-export * from './registration';

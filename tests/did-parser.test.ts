@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { DID, Param } from '../src/did';
 import { StringUtils } from '../src/utils';
 

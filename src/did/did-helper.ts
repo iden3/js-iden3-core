@@ -2,7 +2,10 @@ import { Constants, DidMethodByte, DidMethodNetwork } from '../constants';
 
 // DIDNetworkFlag is a structure to represent DID blockchain and network id
 export class DIDNetworkFlag {
-  constructor(public readonly blockchain: string, public readonly networkId: string) {}
+  constructor(
+    public readonly blockchain: string,
+    public readonly networkId: string
+  ) {}
 
   toString(): string {
     return `${this.blockchain}:${this.networkId}`;
