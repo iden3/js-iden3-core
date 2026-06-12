@@ -1,0 +1,14 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "extends": ["@iden3/biome-config/biome"],
+  "files": {
+    "includes": ["**", "!dist", "!coverage", "!node_modules"]
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noStaticOnlyClass": "off"
+      }
+    }
+  }
+}

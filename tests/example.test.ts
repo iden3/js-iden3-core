@@ -1,7 +1,9 @@
-import { ElemBytes } from './../src/elemBytes';
-import { ClaimOptions, Claim } from '../src/claim';
-import { SchemaHash } from '../src/schemaHash';
 import { Hex, poseidon } from '@iden3/js-crypto';
+import { describe, expect, it } from 'vitest';
+import { Claim, ClaimOptions } from '../src/claim';
+import { ElemBytes } from './../src/elemBytes';
+import { SchemaHash } from '../src/schemaHash';
+
 describe('example new claim', () => {
   it('new claim', () => {
     const schemaHash = new SchemaHash();

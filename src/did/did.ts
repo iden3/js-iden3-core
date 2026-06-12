@@ -1,13 +1,15 @@
-import { Id } from '../id';
+import { sha256 } from '@iden3/js-crypto';
 import {
   Blockchain,
   Constants,
+  DidMethod,
   DidMethodByte,
   DidMethodNetwork,
-  DidMethod,
   NetworkId
 } from '../constants';
 import { BytesHelper } from '../elemBytes';
+import { Id } from '../id';
+import { encoder } from '../utils';
 import {
   DIDNetworkFlag,
   findBlockchainForDIDMethodByValue,
@@ -15,9 +17,7 @@ import {
   findNetworkIDForDIDMethodByValue
 } from './did-helper';
 import { Parser } from './did-parser';
-import { IDID, Param } from './types';
-import { sha256 } from '@iden3/js-crypto';
-import { encoder } from '../utils';
+import type { IDID, Param } from './types';
 // DID Decentralized Identifiers (DIDs)
 // https://w3c.github.io/did-core/#did-syntax
 
@@ -197,9 +197,9 @@ export class DID {
 
   static isUnsupported(method: string, blockchain: string, networkId: string): boolean {
     return (
-      method == DidMethod.Other &&
-      blockchain == Blockchain.Unknown &&
-      networkId == NetworkId.Unknown
+      method === DidMethod.Other &&
+      blockchain === Blockchain.Unknown &&
+      networkId === NetworkId.Unknown
     );
   }
 
@@ -246,7 +246,7 @@ export class DID {
       throw new Error(`${Constants.ERRORS.INCORRECT_DID}: blockchains in ID and DID are different`);
     }
 
-    if (did.idStrings.length > 2 && networkId.toString() != did.idStrings[1]) {
+    if (did.idStrings.length > 2 && networkId.toString() !== did.idStrings[1]) {
       throw new Error(`${Constants.ERRORS.INCORRECT_DID}: networkIDs in Id and DID are different`);
     }
 

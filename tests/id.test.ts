@@ -1,8 +1,10 @@
-import { Blockchain, Constants, DidMethod, NetworkId } from './../src/constants';
-import { Id } from '../src/id';
-import { BytesHelper } from '../src/elemBytes';
 import { Hex } from '@iden3/js-crypto';
+import { describe, expect, it } from 'vitest';
+import { Blockchain, Constants, DidMethod, NetworkId } from './../src/constants';
 import { buildDIDType } from '../src/did';
+import { BytesHelper } from '../src/elemBytes';
+import { Id } from '../src/id';
+
 describe('id tests', () => {
   it('id parses', () => {
     // Generate ID0

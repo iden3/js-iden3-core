@@ -1,5 +1,5 @@
-import { IDID, Param, initDIDParams } from './types';
 import { StringUtils } from '../utils';
+import { type IDID, initDIDParams, Param } from './types';
 
 // a step in the parser state machine that returns the next step
 type ParserStep = () => ParserStep | null;
@@ -215,13 +215,13 @@ export class Parser {
         break;
       }
 
-      if (char == '#') {
+      if (char === '#') {
         // encountered # input may have a fragment following current param, parse that next
         next = this.parseFragment;
         break;
       }
 
-      if (char == '%') {
+      if (char === '%') {
         // a % must be followed by 2 hex digits
         if (
           currentIndex + 2 >= inputLength ||
@@ -312,7 +312,7 @@ export class Parser {
       currentIndex = currentIndex + indexIncrement;
     }
 
-    if (currentIndex == startIndex && this.out.pathSegments.length === 0) {
+    if (currentIndex === startIndex && this.out.pathSegments.length === 0) {
       throw new Error(`first path segment must have at least one character, ${currentIndex}`);
     }
 

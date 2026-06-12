@@ -1,18 +1,18 @@
-import { SchemaHash } from './schemaHash';
-import { ElemBytes } from './elemBytes';
+import { Hex, poseidon } from '@iden3/js-crypto';
 import { Constants } from './constants';
+import { ElemBytes } from './elemBytes';
 import { Id } from './id';
+import { SchemaHash } from './schemaHash';
 import {
   checkBigIntArrayInField,
   checkBigIntInField,
+  putUint64 as getBytesFromUint64,
   getDateFromUnixTimestamp,
   getUint32,
   getUint64,
   getUnixTimestamp,
-  putUint32,
-  putUint64 as getBytesFromUint64
+  putUint32
 } from './utils';
-import { Hex, poseidon } from '@iden3/js-crypto';
 
 /*
 Claim structure
@@ -509,7 +509,8 @@ export class Claim {
   marshalBinary(): Uint8Array {
     const getBytes = (src: ElemBytes[]) =>
       src.reduce((acc: number[], cur: ElemBytes) => {
-        return [...acc, ...cur.bytes];
+        acc.push(...cur.bytes);
+        return acc;
       }, []);
     return Uint8Array.from(getBytes(this._index).concat(getBytes(this._value)));
   }

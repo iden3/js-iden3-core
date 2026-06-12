@@ -1,4 +1,5 @@
-import { BytesHelper, ElemBytes } from './../src/elemBytes';
+import { Hex, poseidon } from '@iden3/js-crypto';
+import { describe, expect, it } from 'vitest';
 import {
   Claim,
   ClaimOptions,
@@ -8,10 +9,11 @@ import {
   MerklizedRootPosition,
   SubjectFlag
 } from '../src/claim';
-import { SchemaHash } from '../src/schemaHash';
 import { Constants } from '../src/constants';
+import { BytesHelper, ElemBytes } from './../src/elemBytes';
 import { Id } from '../src/id';
-import { Hex, poseidon } from '@iden3/js-crypto';
+import { SchemaHash } from '../src/schemaHash';
+
 describe('claim test', () => {
   it('new claim', () => {
     const claim = Claim.newClaim(new SchemaHash(), ClaimOptions.withFlagUpdatable(true));
@@ -88,7 +90,7 @@ describe('claim test', () => {
 
   it('getVersion', () => {
     const sc = new SchemaHash();
-    const maxUint32 = Math.pow(2, 32) - 1;
+    const maxUint32 = 2 ** 32 - 1;
     const claim = Claim.newClaim(sc, ClaimOptions.withVersion(maxUint32));
     expect(maxUint32).toEqual(claim.getVersion());
     const randomInt = Math.floor(Math.random() * maxUint32);

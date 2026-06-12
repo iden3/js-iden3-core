@@ -1,6 +1,6 @@
-import { Constants } from './constants';
-import { checkBigIntInField, fromLittleEndian, toLittleEndian, encoder } from './utils';
 import { Hex, sha256 } from '@iden3/js-crypto';
+import { Constants } from './constants';
+import { checkBigIntInField, encoder, fromLittleEndian, toLittleEndian } from './utils';
 export class BytesHelper {
   static intToBytes(int: bigint): Uint8Array {
     return BytesHelper.intToNBytes(int, Constants.BYTES_LENGTH);
@@ -66,7 +66,7 @@ export class BytesHelper {
 }
 
 export class ElemBytes {
-  private _bytes = new Uint8Array(Constants.BYTES_LENGTH);
+  private _bytes: Uint8Array = new Uint8Array(Constants.BYTES_LENGTH);
 
   constructor(bytes?: Uint8Array | null) {
     if (bytes) {

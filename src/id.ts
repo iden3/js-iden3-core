@@ -1,7 +1,7 @@
+import { base58FromBytes, base58ToBytes, poseidon } from '@iden3/js-crypto';
 import { Constants } from './constants';
-import { fromLittleEndian } from './utils';
 import { BytesHelper, ElemBytes } from './elemBytes';
-import { poseidon, base58ToBytes, base58FromBytes } from '@iden3/js-crypto';
+import { fromLittleEndian } from './utils';
 
 // ID is a byte array with
 // [  type  | root_genesis | checksum ]

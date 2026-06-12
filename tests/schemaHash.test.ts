@@ -1,5 +1,7 @@
 import { Hex } from '@iden3/js-crypto';
+import { describe, expect, it } from 'vitest';
 import { SchemaHash } from '../src/schemaHash';
+
 describe('schema hash', () => {
   it('should return the hex value', () => {
     const source = Uint8Array.from([

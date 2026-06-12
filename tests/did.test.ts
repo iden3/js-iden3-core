@@ -1,15 +1,12 @@
 import { Hex } from '@iden3/js-crypto';
-import { DID, buildDIDType } from '../src/did';
+import { describe, expect, it } from 'vitest';
+import { Blockchain, Constants, DidMethod, DidMethodByte, NetworkId } from './../src/constants';
+import { buildDIDType, DID } from '../src/did';
 import { Id } from '../src/id';
-import { Blockchain, DidMethodByte, DidMethod, NetworkId, Constants } from './../src/constants';
-import { genesisFromEthAddress } from '../src/utils';
 import { registerDidMethodNetwork } from '../src/registration';
+import { genesisFromEthAddress } from '../src/utils';
 
-export const helperBuildDIDFromType = (
-  method: string,
-  blockchain: string,
-  network: string
-): DID => {
+const helperBuildDIDFromType = (method: string, blockchain: string, network: string): DID => {
   const typ = buildDIDType(method, blockchain, network);
   return DID.newFromIdenState(typ, 1n);
 };
@@ -277,7 +274,7 @@ describe('DID tests', () => {
   it('TestDecompose', () => {
     const wantIDHex = '2qCU58EJgrEM9NKvHkvg5NFWUiJPgN3M3LnCr98j3x';
     const ethAddrHex = 'a51c1fc2f0d1a1b8494ed1fe312d7c3a78ed91c0';
-    const genesis = Hex.decodeString('00000000000000' + ethAddrHex).slice(
+    const genesis = Hex.decodeString(`00000000000000${ethAddrHex}`).slice(
       0,
       Constants.GENESIS_LENGTH
     );

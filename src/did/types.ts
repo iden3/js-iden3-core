@@ -1,5 +1,8 @@
 export class Param {
-  constructor(public name: string, public value: string) {}
+  constructor(
+    public name: string,
+    public value: string
+  ) {}
 
   toString(): string {
     if (!this.name) {
