@@ -51,6 +51,15 @@ describe('id tests', () => {
     expect(id1FromBigInt.bytes).toEqual(id1FromBytes.bytes);
   });
 
+  it('fromBigInt rejects values that do not fit in the ID bytes', () => {
+    const id = Id.fromString('11AVZrKNJVqDJoyKrdyaAgEynyBEjksV5z2NjZogFv');
+    const tooLarge = id.bigInt() + (1n << BigInt(Constants.ID.ID_LENGTH * 8));
+
+    expect(() => Id.fromBigInt(tooLarge)).toThrow('big int out of range');
+    expect(() => Id.fromBigInt(-id.bigInt())).toThrow('big int out of range');
+    expect(Id.fromBigInt(id.bigInt()).string()).toEqual(id.string());
+  });
+
   it('marshal/unmarshal', () => {
     const id = Id.fromString('11AVZrKNJVqDJoyKrdyaAgEynyBEjksV5z2NjZogFv');
     const idj = id.marshal();
