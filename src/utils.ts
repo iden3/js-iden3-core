@@ -15,7 +15,8 @@ export function fromLittleEndian(bytes: Uint8Array): bigint {
 }
 
 export function fromBigEndian(bytes: Uint8Array): bigint {
-  return fromLittleEndian(bytes.reverse());
+  // Reverse a copy: reverse() would modify the caller's array in place.
+  return fromLittleEndian(bytes.slice().reverse());
 }
 
 export function toLittleEndian(bigNumber: bigint, len = 31): Uint8Array {
