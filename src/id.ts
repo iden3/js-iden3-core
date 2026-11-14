@@ -84,6 +84,11 @@ export class Id {
   }
 
   static fromBigInt(bigInt: bigint): Id {
+    // Like IDFromInt in go-iden3-core, reject values that do not fit in the ID
+    // bytes: intToNBytes would silently drop the high bytes.
+    if (bigInt < 0n || bigInt >= 1n << BigInt(Constants.ID.ID_LENGTH * 8)) {
+      throw new Error('fromBigInt error: big int out of range');
+    }
     const b = BytesHelper.intToNBytes(bigInt, Constants.ID.ID_LENGTH);
     return Id.fromBytes(b);
   }
